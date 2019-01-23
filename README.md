@@ -10,11 +10,3 @@ Lobby features
 Messages from server to non active players
 Responsive design
 ```
-
-### Prerequisites
-
-```
-Give examples
-```
-
-### Installing
