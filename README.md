@@ -3,11 +3,11 @@ Build in node.js with Express and socket.io
 Server/Client setup
 
 I will be working on:
-	CSS work
-	Messages to non active players
-	Responsiveness
+	*CSS work
+	*Messages to non active players
+	*Responsiveness
 
-# Project Title
+# Pirates Online
 
 Online version of an old board game.
 
