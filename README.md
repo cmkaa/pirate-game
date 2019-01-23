@@ -2,18 +2,17 @@
 
 Online version of an old board game.
 
-## Future work
+## Planned future work
 
 ```
 CSS
 ```
-Lobby
+Lobby features
 ```
 Messages from server to non active players
 ```
 Responsive design
 ```
-
 
 ### Prerequisites
 
