@@ -6,11 +6,8 @@ Online version of an old board game.
 
 ```
 CSS
-```
 Lobby features
-```
 Messages from server to non active players
-```
 Responsive design
 ```
 
