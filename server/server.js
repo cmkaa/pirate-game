@@ -36,9 +36,9 @@ io.on('connection', (socket) => {
     }
 
     // check for unique name on server
-    if (!users.nameAvailable(params.name)) {
-      return callback('name allready in use!');
-    }
+    // if (!users.nameAvailable(params.name)) { // TEST without call to nameAvailable
+    //   return callback('name allready in use!');
+    // }
 
     // control max number of players in each game 
     if (users.getUserList(params.game).length > 1) { // max 2 players now
