@@ -8,8 +8,8 @@ class Player {
     this.socketid = socketid;
     this.shipscoords = []; // shipcoords = [[x,y], [x,y], [x,y], [x,y]] // sunkship = [-1,-1]
     this.lastMoved = -1;
-    this.shipsgold = [0, 0, 0, 0]; // TO DO: 1 for testing - start with 4 x 0
-    this.defensiveFireOptions = []; // fra game.js
+    this.shipsgold = [0, 0, 0, 0]; 
+    this.defensiveFireOptions = [];
     this.cards = [];
     this.haswind = false;
     this.sitoutturns = 0;

@@ -248,13 +248,13 @@ function isShipInHex(x, y, game, players) { // returns false if no ship or objec
 function getPhaseName(phase) {
   var phaseText;
   switch (phase) {
-    case 1: phaseText = "Defensive Fire Phase"
+    case 1: phaseText = "Defense";
       break;
-    case 2: phaseText = "Card Phase"
+    case 2: phaseText = "Play Card";
       break;
-    case 3: phaseText = "Movement Phase"
+    case 3: phaseText = "Move";
       break;
-    case 4: phaseText = "Attack Phase"
+    case 4: phaseText = "Attack";
       break;
   }
   return phaseText;

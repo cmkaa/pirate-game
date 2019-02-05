@@ -35,6 +35,8 @@ function prepareCards(game, cards) {
       if (y<1){y=1}
       if (y>game.BOARD_ROWS-2){y=game.BOARD_ROWS-2}
 
+      // check for habour hexes? TODO2
+
       var card = {
         suit: "treassure",
         posX: x,

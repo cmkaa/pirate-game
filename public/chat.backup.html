@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
 
 <head>
   <meta charset="utf-8">
@@ -8,64 +8,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <!-- <link rel="stylesheet" type="text/css" href="/css/styles.css"> -->
   <link rel="stylesheet" type="text/css" href="/css/main.css">
+
 </head>
 
 <body class="game">
 
-<div class="grid">
-
-  <div class="top">
-    <h1>Pirates Online</h1>
-  </div>
-
-  <div class="cardcanvas">
-      <canvas id="card_canvas" width="200" height="550"></canvas>
-  </div>
-
-  <div class="boardcanvas">
-    <canvas id="canvas" width="550" height="550"></canvas>
-  </div>
-
-  <div class="infoarea">
-    <div id="status"></div>
-    <div id="info"></div>
-    <div id="warning"></div>
-    <div class="buttons_die_score_field">
-      <div id="die_field"></div>
-      <div class="buttons_field">
-        <button type="button" id="action-button">Ok</button>
-        <button type="button" id="cancel-button">Cancel</button>
-      </div>
-      <div id="score">
-      </div>
-    </div>
-  </div>
-
-  <div class="chat__sidebar">
-    <div id="users"></div> <!-- from node chat example -->
-    <div id="userinfo"></div> <!-- from node chat example -->
-
-    <div class="chat__main">
-                  <button id="send-turn">Ready!</button>
-      <div class="chat__footer">
-        <form id="message-form">
-          <input name="message" type="text" id="chat_input" placeholder="Message" autofocus autocomplete="off" />
-          <button id="chat_button">Send</button>
-        </form>
-      </div>
-      <ul id="messages" class="chat__messages"></ul>
-    </div>
-  </div>
-
+<div class="topbanner">
+  <div id="score-banner"></div>
 </div>
 
-  <script id="player-status-template" type="text/template">
+
+
+<div class="chat__sidebar">
+  <div id="users"></div> <!-- from node chat example -->
+  <div id="userinfo"></div> <!-- from node chat example -->
+  <div class="chat__main">
+    <div class="chat__footer">
+      <form id="message-form">
+        <input name="message" type="text" placeholder="Message" autofocus autocomplete="off" />
+        <button>Send</button>
+      </form>
+      <button id="send-turn">Ready!</button>
+    </div>
+    <ul id="messages" class="chat__messages"></ul>
+  </div>
+</div>
+
+<div class="panel">
+  <div id="status"></div>
+  <div id="warning"></div>
+  <div id="die"></div>
+  <div id="info"></div>
+  <div id="buttons">
+    <button type="button" id="action-button">Ok</button>
+    <button type="button" id="cancel-button">Cancel</button>
+  </div>
+</div>
+
+<div class="boardcanvas">
+   <canvas id="canvas" width="660" height="660"></canvas>
+</div>
+
+<div class="cardcanvas">
+  <canvas id="card_canvas" width="1160" height="200"></canvas>
+</div>
+
+
+<script id="player-status-template" type="text/template">
     <div class="player-status">
-      <div class="message__body">
-        <h3>Turn: {{turn}} - {{phase}}</h3>
-      </div>
       <div class="message__title">
-         <h3>{{playing}}</h3>
+         <h4>{{playing}}</h4>
+      </div>
+      <div class="message__body">
+        <p>Phase: <b>{{phase}}</b></p>
+        <p>Turn: {{turn}}</p>
       </div>
     </div>
   </script> 
