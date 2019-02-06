@@ -65,8 +65,8 @@ stormCard.src = '/js/libs/images/sitout.png';
 //stormCard.src = '/js/libs/images/ship_crash_100x150.png';
 var diverCard = new Image();
 diverCard.src = '/js/libs/images/diver.png';
-var treassureCard = new Image();
-treassureCard.src = '/js/libs/images/treassuremap_100x150.png';
+var treasureCard = new Image();
+treasureCard.src = '/js/libs/images/treasuremap_100x150.png';
 
 //PRE LOAD SOUNDS:
 var cannon = new Audio();
@@ -77,7 +77,7 @@ var dierollsound = new Audio();
 dierollsound.src = '/js/libs/sound/dieroll.mp3';
 
 function preloadImages() { // TO DO: are we sure they all get loaded ? make a promise function ?
-  var imageArray = new Array('/js/libs/images/ship_storm_100x150.png', '/js/libs/images/ship_100x150.png', '/js/libs/images/ship_crash_100x150.png', '/js/libs/images/treassure_100x150.png', '/js/libs/images/treassuremap_100x150.png', '/js/libs/images/boat50x50_black.png', '/js/libs/images/boat50x50_blue.png', '/js/libs/images/boat50x50_red.png', '/js/libs/images/boat50x50_yellow.png');
+  var imageArray = new Array('/js/libs/images/ship_storm_100x150.png', '/js/libs/images/ship_100x150.png', '/js/libs/images/ship_crash_100x150.png', '/js/libs/images/treasure_100x150.png', '/js/libs/images/treasuremap_100x150.png', '/js/libs/images/boat50x50_black.png', '/js/libs/images/boat50x50_blue.png', '/js/libs/images/boat50x50_red.png', '/js/libs/images/boat50x50_yellow.png');
 
   for (var i = 0; i < imageArray.length; i++) {
     var tempImage = new Image();
@@ -224,6 +224,7 @@ function drawTilesInViewNew() {
           colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cab796');
           break;
         }
+
         case 2: { // habour
           colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'grey');
           // and add stroke around
@@ -231,15 +232,17 @@ function drawTilesInViewNew() {
 
           break;
         }
+
         case 3: { // sea
           colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cbe1e1');
           break;
         }
         
-        case 4: { // gold in sea
+        case 4: { // gold in sea        
+
           // draw sea hex
           colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cbe1e1');
-          //colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'yellow');
+          
           // draw gold marking
           drawGoldInSea(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), 'gold');
           break;
@@ -390,6 +393,7 @@ function drawTilesInViewNew() {
               break;
             }
           }
+          
         }
       }
       i++; // increase counter - next hex
@@ -542,9 +546,9 @@ function drawCards() {
         break;
       }
 
-      case 'treassure': { // draw treassure card here
-        cardcanvasContext.drawImage(treassureCard, (x_Index * (CARD_WIDTH + 4)), (y_Index * (CARD_HEIGHT + 4)) + 54, CARD_WIDTH, CARD_HEIGHT);
-        // draw coordinates of treassure
+      case 'treasure': { // draw treasure card here
+        cardcanvasContext.drawImage(treasureCard, (x_Index * (CARD_WIDTH + 4)), (y_Index * (CARD_HEIGHT + 4)) + 54, CARD_WIDTH, CARD_HEIGHT);
+        // draw coordinates of treasure
         cardcanvasContext.fillStyle = "black";
         cardcanvasContext.fillText(playerCards[i].posX + "," + playerCards[i].posY, (x_Index * (CARD_WIDTH + 4)) + 32, (y_Index * (CARD_HEIGHT + 4)) + 54 + 72);
         break;
@@ -601,13 +605,13 @@ function drawPlayedCards() {
 
           cardcanvasContext.drawImage(shipCard, 0 + (i * 68), 415, CARD_WIDTH, CARD_HEIGHT);
           break;
-        case 'treassure':
-          console.log('drawing played cards...treassure card');
+        case 'treasure':
+          console.log('drawing played cards...treasure card');
 
-          cardcanvasContext.drawImage(treassureCard, 0 + (i * 68), 415, CARD_WIDTH, CARD_HEIGHT);
+          cardcanvasContext.drawImage(treasureCard, 0 + (i * 68), 415, CARD_WIDTH, CARD_HEIGHT);
           cardcanvasContext.fillStyle = "black";
           cardcanvasContext.fillText(playedCards[i].posX + "," + playedCards[i].posY, 32 + (i * 68), 415+72);
-          // add treassure coords?
+          // add treasure coords?
           break;
       }
     }

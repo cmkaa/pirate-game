@@ -52,13 +52,13 @@ class Game {
     this.selectedCardType;
     //this.markedCard =-1;
     this.playedCard; // needed?
-    this.flagLandTreassure = false; // needed?
-    this.treassureResolved = false; // needed?
+    this.flagLandTreasure = false; // needed?
+    this.treasureResolved = false; // needed?
     this.flagReadyToResolve = false; // needed?
     this.flagResolved = false;
-    this.treassureX; // needed?
-    this.treassureY; // needed?
-    this.distanceToTreassure; // needed?
+    this.treasureX; // needed?
+    this.treasureY; // needed?
+    this.distanceToTreasure; // needed?
     this.goldOnLand = false;
     this.goldRange = -1;
     this.optionList = [];

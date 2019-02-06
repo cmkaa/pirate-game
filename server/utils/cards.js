@@ -1,7 +1,7 @@
 const NUMBEROFSTARTCARDS = 5;
 const WIND_CARDS = 10;
 const SHIP_CARDS = 10;
-const TREASSURE_CARDS = 10;
+const treasure_CARDS = 10;
 const DIVER_CARDS = 5; // should be 5
 
 
@@ -23,10 +23,10 @@ function prepareCards(game, cards) {
       cards.push(card);
     }
 
-    // TREASSURE_CARDS ;
+    // treasure_CARDS ;
     var x;
     var y;
-    for (var i=0; i<TREASSURE_CARDS; i++) {
+    for (var i=0; i<treasure_CARDS; i++) {
       x = Math.floor(Math.random() * game.BOARD_COLS);
       y = Math.floor(Math.random() * game.BOARD_ROWS);
 
@@ -38,7 +38,7 @@ function prepareCards(game, cards) {
       // check for habour hexes? TODO2
 
       var card = {
-        suit: "treassure",
+        suit: "treasure",
         posX: x,
         posY: y
       }

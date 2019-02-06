@@ -58,7 +58,7 @@ socket.on('showScore', function (scoreArray) {
     console.log('Gold = ' + scoreArray[i].gold);
     console.log('Skibe = ' + scoreArray[i].ships);
 
-    score.append(jQuery('<p></p>').text(scoreArray[i].name + ': Guld: ' + scoreArray[i].gold + ' Skibe: ' + scoreArray[i].ships));
+    score.append(jQuery('<p></p>').text(scoreArray[i].name + ': Gold: ' + scoreArray[i].gold + ' Ships: ' + scoreArray[i].ships));
     jQuery('#score').html(score); 
   }
 });
@@ -147,6 +147,11 @@ socket.on('setupTextForMarkShip', function (moves, dieroll) {
   document.getElementById("info").innerHTML = `<p><em>You hit a ${dieroll}!</em></p>`;
   document.getElementById("info").innerHTML += `<p>You can move ${moves} hexes.</p>`;
   document.getElementById("info").innerHTML += "<p>Click on a ship and then 'select' to select the ship for movement.</p>";
+  dierollsound.play();
+});
+
+socket.on('showDieRoll', function (dieroll) {
+  document.getElementById("die_field").innerHTML = `<img class='die' src='/js/libs/images/die_${dieroll}.png'>`;
   dierollsound.play();
 });
 
@@ -257,7 +262,7 @@ socket.on('newMessage', function (message) {
 socket.on('gameStarts', function(id, coord) { // preload images, set PlayerId, activate eventlisteners, set initial viewPoint
   playerId = id;
   viewPoint = coord;
-  //playerCards = [{ card: { suit: "treassure", posX: 2, posY: 4 }, marking: 1 }, { card: { suit: "ship" }, marking: 0 }, { card: { suit: "wind" }, marking: 0 }, { card: { suit: "ship" }, marking: 0 }, { card: { suit: "diver" }, marking: 0 } ]; // test
+  //playerCards = [{ card: { suit: "treasure", posX: 2, posY: 4 }, marking: 1 }, { card: { suit: "ship" }, marking: 0 }, { card: { suit: "wind" }, marking: 0 }, { card: { suit: "ship" }, marking: 0 }, { card: { suit: "diver" }, marking: 0 } ]; // test
   // BOARD_COLS - TO DO:
   // BOARD_ROWS - TO DO:
   // TILE_SIZE - TO DO:

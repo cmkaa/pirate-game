@@ -131,7 +131,7 @@ io.on('connection', (socket) => {
                   players.forEach(function (player) {
                     //console.log('giving cards to players at start');
                     //console.log('player cards = ' + JSON.stringify(player.cards));
-                    io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                    io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                   });
                 });
               });
@@ -338,7 +338,7 @@ io.on('connection', (socket) => {
                 // announce number of defensiveFireOptions
                 io.to(player.socketid).emit('updateInfoText', "info",
                 `<p>You have ${numberOfFireOptions} defensive fire options.</p>
-                <p>NEW! Click on a ship to see it's fire options and then on a marked enemy ship.</p>`);
+                <p>Click on a ship to see it's fire options and then on a marked enemy ship.</p>`);
 
                 updateCanvasPlayer(x, y, player.id).then(() => {
                   // canvas updated
@@ -379,7 +379,7 @@ io.on('connection', (socket) => {
           // we must have a game.selectedCardIndex which we use to identify the played card.
 
           if (game.selectedCardIndex != -1) {
-            //let playedCards = []; // keep track of played cards this turn - can be two cards if treassure card in sea
+            //let playedCards = []; // keep track of played cards this turn - can be two cards if treasure card in sea
 
             console.log('we have a selectedCardIndex of = ' + game.selectedCardIndex);
             switch (player.cards[game.selectedCardIndex].suit) {
@@ -398,7 +398,7 @@ io.on('connection', (socket) => {
 
                 // emit cards to activePlayer - removing played card from player and resetting selectedCardIndex
                 game.selectedCardIndex = -1;
-                io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                 io.to(player.socketid).emit('playedCards', playedCards);
                 // set text for ending card phase
                 // io.to(player.socketid).emit('setupTextEndCardPhase');
@@ -435,7 +435,7 @@ io.on('connection', (socket) => {
 
                     // emit cards to activePlayer - removing played card from player and resetting selectedCardIndex
                     game.selectedCardIndex = -1;
-                    io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                    io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                     io.to(player.socketid).emit('playedCards', playedCards);
 
                     //console.log('ship card was handled well!')
@@ -480,7 +480,7 @@ io.on('connection', (socket) => {
                 break;
               }
 
-              case 'treassure': {
+              case 'treasure': {
                 // to get gold
                 console.log('do we have a range to gold on land set ? ? ' + game.goldRange);
                 if (game.goldRange > 0) {  // if we have a range to gold on land
@@ -506,7 +506,7 @@ io.on('connection', (socket) => {
                   } else {
                     // didnt get gold
                     //console.log('better luck next time!!!')
-                    // keeping treassure card
+                    // keeping treasure card
                     gameControl();
                   }
                   x = player.shipscoords[game.selectedShip][0];
@@ -516,8 +516,8 @@ io.on('connection', (socket) => {
                   game.goldRange = -1;
                   game.optionList = [];
                   game.selectedCardIndex = -1;
-                  game.treassureX = -1; // needed?
-                  game.treassureY = -1;  // needed?
+                  game.treasureX = -1; // needed?
+                  game.treasureY = -1;  // needed?
                   game.goldOnLand = false;
                   game.selectedShip = -1;
 
@@ -525,18 +525,18 @@ io.on('connection', (socket) => {
                   updateCanvasPlayer(x, y, game.activePlayer).then(() => {
                     // emit cards to activePlayer - removing played card from player and resetting selectedCardIndex
                     game.selectedCardIndex = -1;
-                    io.to(player.socketid).emit('drawPlayerCards', players[game.activePlayer].cards, game.selectedCardIndex); // NEW
+                    io.to(player.socketid).emit('drawPlayerCards', players[game.activePlayer].cards, game.selectedCardIndex); 
                     io.to(player.socketid).emit('playedCards', playedCards);
 
                     // set text for ending card phase
                     //io.to(player.socketid).emit('setupTextEndCardPhase');
                     io.to(player.socketid).emit('updateInfoText', "info", "<p>You played a card. Click 'next phase' to continue.</p>");
 
-                    // emit activeplayer played a treassure card
+                    // emit activeplayer played a treasure card
                     players.forEach(function (player) {
                       // update score
                       if (player.id != players[game.activePlayer].id) { // not to active player
-                        io.to(player.socketid).emit('updateInfoText', "warning", `<p>${players[game.activePlayer].name} played a treassure card and got gold on ship!</p>`);
+                        io.to(player.socketid).emit('updateInfoText', "warning", `<p>${players[game.activePlayer].name} played a treasure card and got gold on ship!</p>`);
                       }
                     }); 
 
@@ -546,9 +546,9 @@ io.on('connection', (socket) => {
                   });
 
                 } else { // first time actionbutton is clicked in card phase
-                  console.log('we played a treassure card!');
-                  handleTreassureCard(game, players).then(() => { // go and handle it and then setup to end phase
-                    console.log('handleTreassureCard() done');
+                  console.log('we played a treasure card!');
+                  handleTreasureCard(game, players).then(() => { // go and handle it and then setup to end phase
+                    console.log('handleTreasureCard() done');
                   });
                 }
                 break;
@@ -609,7 +609,7 @@ io.on('connection', (socket) => {
                   game.selectedShip = -1;
                   game.selectedCardIndex = -1;
                   // emit cards to player
-                  io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                  io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                   io.to(player.socketid).emit('playedCards', playedCards); // emit both played cards
 
                   // emit activeplayer played a diver card
@@ -629,7 +629,7 @@ io.on('connection', (socket) => {
                   // reset selectedCardIndex
                   game.selectedCardIndex = -1;
                   // emit cards to player
-                  io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                  io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                   // reset 
                   gameControl();
                 }
@@ -648,7 +648,7 @@ io.on('connection', (socket) => {
           console.log('markedShip = ' + game.markedShip);
           // action button click is to select marked ship
           // check if a ship is not selected
-          if (game.selectedShip === -1 && game.movesLeft != 0) { // click to select ship
+          if (game.selectedShip === -1 && game.movesLeft != 0) { // we have a die roll but no selected ship - click is to select ship
             game.selectedShip = game.markedShip;
             player.lastMoved = game.selectedShip;
             game.markedShip = -1;
@@ -674,6 +674,8 @@ io.on('connection', (socket) => {
               // emit dieroll
               console.log('Die roll of = ' + dieRoll);
 
+              io.to(player.socketid).emit('updateInfoText', "warning", `<p>You rolled a ${dieRoll}</p>`);
+
               // emit die roll to non active players
               players.forEach(function (player) {
                 if (player.id != players[game.activePlayer].id) { // not to active player
@@ -693,7 +695,7 @@ io.on('connection', (socket) => {
                   // emit storm card drawn 'stormcard'
                   players.forEach(function (player) {
                     if (player.id == game.activePlayer) {
-                      io.to(player.socketid).emit('updateInfoText', "warning", `You got a storm card and must sit out for ${card.turns} turns!`);
+                      io.to(player.socketid).emit('updateInfoText', "warning", `You rolled a '6' and got a storm card and must sit out for ${card.turns} turns!`);
                     } else {
                       io.to(player.socketid).emit('updateInfoText', "warning", `${players[game.activePlayer].name} rolled a '6', got a storm card and must sit out for ${card.turns} turns!`);
                     }
@@ -717,36 +719,47 @@ io.on('connection', (socket) => {
                   }); 
 
                     // emit cards to activePlayer
-                  io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                  io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
 
                 } else { // can't have more than 6 cards
                   // emit warning - info text - sorry no cards for you
-                  console.log('You cant have more than 6 cards');
-
+                  io.to(player.socketid).emit('updateInfoText', "warning", "You can have no more than 6 cards!");
                   }
               }
-              let moves = dieRoll;
-              // calculate moves
-              if (player.haswind === true) {
-                moves = moves * 2;
-                player.haswind = false; // reset has wind flag
-              } 
 
-              game.movesLeft = moves;
-              console.log('MovesLeft = ' + game.movesLeft);
+              // handle no ships left
+              console.log('number of ships = ' + player.numberOfShips());
+              if (player.numberOfShips() != 0) {
+                let moves = dieRoll;
+                // calculate moves
+                if (player.haswind === true) {
+                  moves = moves * 2;
+                  player.haswind = false; // reset has wind flag
+                }
 
-              // setup info text and buttons
-              io.to(player.socketid).emit('setupTextForMarkShip', game.movesLeft, dieRoll);
-              io.to(player.socketid).emit('hideActionButton');
-              io.to(player.socketid).emit('hideCancelButton');
+                game.movesLeft = moves;
+                console.log('MovesLeft = ' + game.movesLeft);
+
+                // setup info text and buttons
+                io.to(player.socketid).emit('setupTextForMarkShip', game.movesLeft, dieRoll);
+                io.to(player.socketid).emit('hideActionButton');
+                io.to(player.socketid).emit('hideCancelButton');
+              } else {
+                // no ships so skip movement phase
+                io.to(player.socketid).emit('showDieRoll', dieRoll);
+                io.to(player.socketid).emit('hideActionButton');
+                io.to(player.socketid).emit('hideCancelButton');
+                console.log('skipping out of movement - we have no ships')
+                game.activePhase++;
+                gameControl();
+              }
+
             });
 
           } else {
             console.log('this shouldnt happen - we should not be able to click action button with a selected ship');
           }
-          // console.log('Leaving actionButtonClicked - in movement phase')
-          // console.log('selectedShip = ' + game.selectedShip);
-          // console.log('markedShip = ' + game.markedShip);
+
           break;
         }
         case 4: { // ATTACK PHASE
@@ -765,31 +778,7 @@ io.on('connection', (socket) => {
             io.to(player.socketid).emit('clearTextFireDieRoll');
 
             nextPlayer();
-
-            //game.activePhase = 1;
-            // remove fireoptions
-
-            // // but for next player or next turn and first player?
-            // if (game.activePlayer === game.numberOfPlayers - 1) { // last player
-            //   // clean up activeplayer text and buttons before changing player
-            //   io.to(player.socketid).emit('hideActionButton');
-            //   io.to(player.socketid).emit('hideCancelButton');
-            //   io.to(player.socketid).emit('setupTextEndPlayer');
-
-            //   game.turn++;
-            //   game.activePlayer = 0;
-            //   // emit?
-
-            // } else { // next players turn
-            //   // clean up activeplayer text and buttons before changing player
-            //   io.to(player.socketid).emit('hideActionButton');
-            //   io.to(player.socketid).emit('hideCancelButton');
-            //   io.to(player.socketid).emit('setupTextEndPlayer');
-
-            //   game.activePlayer++;
-            //   // emit?
-            // }
-            // gameControl();
+          
             break;
           } 
 
@@ -973,7 +962,7 @@ io.on('connection', (socket) => {
                   updateCanvasPlayer(x, y, game.activePlayer).then(() => {
                     io.to(player.socketid).emit('hideActionButton');
                     io.to(player.socketid).emit('showCancelButton', "deselect");
-                    io.to(player.socketid).emit('updateInfoText', "info", "<p>NEW! Click on marked fire option to select as target. Click 'Cancel' to deselect your ship</p>");
+                    io.to(player.socketid).emit('updateInfoText', "info", "<p>Click on marked fire option to select as target. Click 'Cancel' to deselect your ship</p>");
                   });
                   // wait for action- or cancel-button click
                 });
@@ -998,14 +987,14 @@ io.on('connection', (socket) => {
                 //io.to(player.socketid).emit('setupTextDefensivePhase', numberOfFireOptions);
                 io.to(player.socketid).emit('updateInfoText', "info",
                   `<p>You have ${numberOfFireOptions} defensive fire options.</p>
-                <p>NEW! Click on a ship to see it's fire options and then on a marked enemy ship.</p>`);
+                <p>Click on a ship to see it's fire options and then on a marked enemy ship.</p>`);
               });
             });
 
 
           } else { // exit defensive fire phase
             // means no more options and click should end phase - cleanup variables
-            game.defensiveFireOptions = [];
+            players[game.activePlayer].defensiveFireOptions = [];
             game.selectedShip = -1;
             game.selectedTarget = [-1,-1];
             game.markedDefensiveFireShips = [0, 0, 0, 0];
@@ -1068,6 +1057,8 @@ io.on('connection', (socket) => {
           // means no more options and click should end phase
           // reset fireOptions
           game.fireOptions = [];
+
+          if (game.selectedShip != -1) {
           // reset selectedShip
           let ship = game.selectedShip;
           
@@ -1075,6 +1066,12 @@ io.on('connection', (socket) => {
           game.selectedTarget = [-1, -1];
           let x = players[game.activePlayer].shipscoords[ship][0];
           let y = players[game.activePlayer].shipscoords[ship][1];
+
+          } else {
+            // set to habour hex
+            x = game.PLAYER_HABOUR_POSITIONS[game.activePlayer].x;
+            y = game.PLAYER_HABOUR_POSITIONS[game.activePlayer].y;
+          }
           
           updateCanvasPlayer(x, y, game.activePlayer).then(() => {
             // canvas updated
@@ -1243,14 +1240,14 @@ io.on('connection', (socket) => {
                     // check if ship with shipId is in game.optionList
                     for (let i = 0; i < game.optionList.length; i++) {
                       if (game.optionList[i][0] === player.shipscoords[shipId][0] && game.optionList[i][0] === player.shipscoords[shipId][0]){
-                        // ship is close enough to treassure
+                        // ship is close enough to treasure
                         game.selectedShip = shipId;
   
                         // update canvas for active Player
                         updateCanvasPlayer(x, y, game.activePlayer).then(() => {
                           // canvas updated
 
-                          // setup button to hit die for getting treassure - you must roll at least a 
+                          // setup button to hit die for getting treasure - you must roll at least a 
                           io.to(players[game.activePlayer].socketid).emit('showActionButton', "Roll die");
                           io.to(players[game.activePlayer].socketid).emit('hideCancelButton');
                           //io.to(players[game.activePlayer].socketid).emit('setupTextGetGoldDieRoll', game.goldRange);
@@ -1355,7 +1352,7 @@ io.on('connection', (socket) => {
                 }
             });
               break;
-            } else if (game.movesLeft > 0) { // only if we have rolled a die  NEW we shouldnt mark ship before die roll!!!!
+            } else if (game.movesLeft > 0) { // only if we have rolled a die.  we shouldnt mark ship before die roll!!!!
               // or movement is finished and we havnt passed to next phase!!!!
               
               console.log('movement hasnt started yet - mark and select ship before moving');
@@ -1425,7 +1422,7 @@ io.on('connection', (socket) => {
       game.selectedCardIndex = cardIndex;
 
       // emit cards with selected
-      io.to(players[game.activePlayer].socketid).emit('drawPlayerCards', players[game.activePlayer].cards, game.selectedCardIndex); // NEW
+      io.to(players[game.activePlayer].socketid).emit('drawPlayerCards', players[game.activePlayer].cards, game.selectedCardIndex);
 
       // load actionButton and InfoText
       console.log('you can now click on the action button to play card, or skip to movement phase');
@@ -1756,9 +1753,16 @@ function gameControl() {
       })
       setupAttackPhase(game, players).then(() => {
         // update canvas - coord is based on last moved
+        // handle no ships
+        if (players[game.activePlayer].numberOfShips() != 0) {
         let boat = players[game.activePlayer].lastMoved
         x = players[game.activePlayer].shipscoords[boat][0];
         y = players[game.activePlayer].shipscoords[boat][1];
+        } else {
+          // set x and y to active player harbour
+          x = game.PLAYER_HABOUR_POSITIONS[game.activePlayer].x;
+          y = game.PLAYER_HABOUR_POSITIONS[game.activePlayer].y;
+        }
         updateCanvasAll(x, y).then(() => {
           // camvas updated
           console.log('AttackPhase setup has finished');
@@ -1854,42 +1858,48 @@ function setupAttackPhase() {
 
     // check if selectedShip is in habour
     var habourFlag = false;
-    var x = players[game.activePlayer].shipscoords[game.selectedShip][0];
-    var y = players[game.activePlayer].shipscoords[game.selectedShip][1];
-    if (game.PLAYER_HABOUR_POSITIONS[game.activePlayer].x === x && game.PLAYER_HABOUR_POSITIONS[game.activePlayer].y === y) { // x, y is a habour
-      habourFlag = true;
-    }
+    if (game.selectedShip != -1) { // handling no ships left
+      var x = players[game.activePlayer].shipscoords[game.selectedShip][0];
+      var y = players[game.activePlayer].shipscoords[game.selectedShip][1];
+      
+      if (game.PLAYER_HABOUR_POSITIONS[game.activePlayer].x === x && game.PLAYER_HABOUR_POSITIONS[game.activePlayer].y === y) { // x, y is a habour
+        habourFlag = true;
+      }
+    
+      if (!habourFlag) {
+        getFireOptions(game, players).then((list) => {
+          console.log('got fire option list = ' + JSON.stringify(list));
+          game.fireOptions = list;
+          // emit clear moves
+          io.to(player.socketid).emit('clearMovesLeft');
+          // emit resetPlayedCards
+          io.to(player.socketid).emit('resetPlayedCards');
+          // reset playedCards
+          playedCards = [];
 
-    if (!habourFlag) {
-      getFireOptions(game, players).then((list) => {
-        console.log('got fire option list = ' + JSON.stringify(list));
-        game.fireOptions = list;
-        // emit clear moves
-        io.to(player.socketid).emit('clearMovesLeft');
-        // emit resetPlayedCards
-        io.to(player.socketid).emit('resetPlayedCards');
-        // reset playedCards
-        playedCards = [];
+          // we get fire options list 
+          let numberOfFireOptions = game.fireOptions.length;
+          // emit to active player
+          if (numberOfFireOptions > 0) {
+            //io.to(player.socketid).emit('setupTextAttackPhase', numberOfFireOptions);
+            io.to(player.socketid).emit('updateInfoText', "info", `<p>You have ${numberOfFireOptions} fire options. Click on marked enemy ship to mark as target or 'skip' to exit fire phase</p>`);
 
-        // we get fire options list 
-        let numberOfFireOptions = game.fireOptions.length;
-        // emit to active player
-        if (numberOfFireOptions > 0) {
-          //io.to(player.socketid).emit('setupTextAttackPhase', numberOfFireOptions);
-          io.to(player.socketid).emit('updateInfoText', "info", `<p>You have ${numberOfFireOptions} fire options. Click on marked enemy ship to mark as target or 'skip' to exit fire phase</p>`);
+            io.to(player.socketid).emit('showCancelButton', "Skip");
+            //io.to(player.socketid).emit('showActionButton', "Ok");
 
-          io.to(player.socketid).emit('showCancelButton', "Skip");
-          //io.to(player.socketid).emit('showActionButton', "Ok");
-
-        } else { // no fire options
-          //io.to(player.socketid).emit('setupTextAttackNone');
-          io.to(player.socketid).emit('updateInfoText', "info", "<p>No ships to shoot at. Click 'Next' to end your turn</p>");
-          io.to(player.socketid).emit('showCancelButton', "Next");
-        }
-      });
+          } else { // no fire options
+            //io.to(player.socketid).emit('setupTextAttackNone');
+            io.to(player.socketid).emit('updateInfoText', "info", "<p>No ships to shoot at. Click 'Next' to end your turn</p>");
+            io.to(player.socketid).emit('showCancelButton', "Next");
+          }
+        });
+      } else {
+        game.fireOptions = [];
+        //io.to(player.socketid).emit('setupTextAttackNone');
+        io.to(player.socketid).emit('updateInfoText', "info", "<p>No ships to shoot at. Click 'Next' to end your turn</p>");
+        io.to(player.socketid).emit('showCancelButton', "Next");
+      }
     } else {
-      game.fireOptions = [];
-      //io.to(player.socketid).emit('setupTextAttackNone');
       io.to(player.socketid).emit('updateInfoText', "info", "<p>No ships to shoot at. Click 'Next' to end your turn</p>");
       io.to(player.socketid).emit('showCancelButton', "Next");
     }
@@ -1927,7 +1937,7 @@ function setupDefensivePhase() {
 
         io.to(player.socketid).emit('updateInfoText', "info",
         `<p>You have ${numberOfFireOptions} defensive fire options.</p>
-        <p>NEW! Click on a ship to see it's fire options and then on a marked enemy ship.</p>`);
+        <p>Click on a ship to see it's fire options and then on a marked enemy ship.</p>`);
 
         updateCanvasPlayer(x, y, player.id).then(() => {
           // canvas updated
@@ -1953,18 +1963,18 @@ function setupDefensivePhase() {
   });
 }
 
-function handleTreassureCard() {
+function handleTreasureCard() {
   return new Promise(resolve => {
-    console.log('we handled treassure card played now :-) ');
+    console.log('we handled treasure card played now :-) ');
     let player = players[game.activePlayer];
     // check if land or sea tressure
     console.log('selectedCardIndex = ' + game.selectedCardIndex);
-    let treassureX = player.cards[game.selectedCardIndex].posX;
-    let treassureY = player.cards[game.selectedCardIndex].posY;
-    console.log('looking for treassure at x = ' + treassureX + ' and Y = ' + treassureY);
+    let treasureX = player.cards[game.selectedCardIndex].posX;
+    let treasureY = player.cards[game.selectedCardIndex].posY;
+    console.log('looking for treasure at x = ' + treasureX + ' and Y = ' + treasureY);
 
-    if (game.tileGrid[treassureX + game.BOARD_COLS * treassureY] === 3) { // treassure in sea
-      console.log('treassure is in the sea - you need a diver! and you must have a ship without gold in the hex')
+    if (game.tileGrid[treasureX + game.BOARD_COLS * treasureY] === 3) { // treasure in sea
+      console.log('treasure is in the sea - you need a diver! and you must have a ship without gold in the hex')
       // check for diver card
       let diverFlag = false;
       for (let i = 0; i < player.cards.length; i++) {
@@ -1973,10 +1983,10 @@ function handleTreassureCard() {
         }
       }
       if (diverFlag) {
-        shipInHex(player, treassureX, treassureY).then((id) => {
+        shipInHex(player, treasureX, treasureY).then((id) => {
           if (id != -1) { // must be a ship here
-            // is there a ship over treassure position?
-            if (treassureX === player.shipscoords[id][0] && treassureY === player.shipscoords[id][1]) {
+            // is there a ship over treasure position?
+            if (treasureX === player.shipscoords[id][0] && treasureY === player.shipscoords[id][1]) {
               // no gold onboard
               if (player.shipsgold[id] === 0) {
                 // now we get gold
@@ -1993,7 +2003,7 @@ function handleTreassureCard() {
                 // remove card at index markedCard from player.cards
                 let playedCard = player.cards.splice(game.selectedCardIndex, 1);
 
-                // place playedCard in the stack bottom and add treassure card to played cards
+                // place playedCard in the stack bottom and add treasure card to played cards
                 cards.push(playedCard);
                 playedCards.push(playedCard[0]);
                 console.log('playedCard is = ' + JSON.stringify(playedCard));
@@ -2012,13 +2022,13 @@ function handleTreassureCard() {
                 console.log('playedCard is = ' + JSON.stringify(playedCard));
                 console.log('playedCards is now = ' + JSON.stringify(playedCards));
                 // update canvas
-                updateCanvasPlayer(treassureX, treassureY, player.id).then(() => {
+                updateCanvasPlayer(treasureX, treasureY, player.id).then(() => {
                   // canvas updated
                 });
 
                 // emit cards to activePlayer - removing played card from player and resetting selectedCardIndex
                 game.selectedCardIndex = -1;
-                io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); // NEW
+                io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                 io.to(player.socketid).emit('playedCards', playedCards); // emit both played cards
 
               } else {
@@ -2043,15 +2053,15 @@ function handleTreassureCard() {
         setupCardPhase().then(() => {
         });
       }
-    } else { // treassure on land
+    } else { // treasure on land
 
       game.goldOnLand = true;
-      console.log('treassure is on land - you need to get a ship as close as possible!');
-      // mark ships close enough to land treassure
+      console.log('treasure is on land - you need to get a ship as close as possible!');
+      // mark ships close enough to land treasure
       // if no close enouth - emit error and reset card phase
       // emit "select ship to pick up gold on land or click next to skip card phase" 
 
-      getGoldOptions(treassureX, treassureY).then(() => {
+      getGoldOptions(treasureX, treasureY).then(() => {
         // now game.range and game.optionList is now set
       });
 
@@ -2065,13 +2075,13 @@ function handleTreassureCard() {
   });
 }
 
-function getGoldOptions(treassureX, treassureY) {
+function getGoldOptions(treasureX, treasureY) {
   return new Promise(resolve => {
 
     // start first loop at distance 1
     var range = 0;
     var closest = 0;
-    // we collect a list of sea hexes 'range' hexes away from treassureX, treassureY
+    // we collect a list of sea hexes 'range' hexes away from treasureX, treasureY
     let optionList = [];
     console.log('at start range = ' + range);
     console.log('at start closest = ' + closest)
@@ -2080,10 +2090,10 @@ function getGoldOptions(treassureX, treassureY) {
     do {
       range++;
       console.log('range now = ' + range);
-      minX = treassureX - range;
-      minY = treassureY - range;
-      maxX = treassureX + range;
-      maxY = treassureY + range;
+      minX = treasureX - range;
+      minY = treasureY - range;
+      maxX = treasureX + range;
+      maxY = treasureY + range;
       console.log('non corrected for borders:');
       console.log('minX = ' + minX);
       console.log('minY = ' + minY);
@@ -2234,7 +2244,7 @@ function getGrid(coords) {
                 }
               }
 
-              if (p === game.activePlayer && game.activePhase != 2) { // NEW && !=2 to avoid problem in card phase 
+              if (p === game.activePlayer && game.activePhase != 2) { //  && !=2 to avoid problem in card phase 
                 if (game.markedShip != -1 && ship === game.markedShip) { // match 
                   code += '1'; // show as marked
                 } else if (game.selectedShip != -1 && ship === game.selectedShip) {
