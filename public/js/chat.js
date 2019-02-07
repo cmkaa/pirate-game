@@ -47,26 +47,20 @@ socket.on('updateUserList', function (users) {
 });
 
 socket.on('showScore', function (scoreArray) {
-  //console.log('score looks like = ' + JSON.stringify(scoreArray));
-  //console.log('score is = ' + scoreArray);
-
-  var score = jQuery('<div class="score_field"></div>');
-  score.append(jQuery('<h3></h3>').text('Score'));
-
+  document.getElementById("score").innerHTML = "<h3>Score</h3>";
+  document.getElementById("score").innerHTML += "<span class='a'><b>Player</b></span><span class='b'><b>Gold</b></span><span class='b'><b>Ships</b></span><br>";
   for (let i = 0; i < scoreArray.length; i++){
-    console.log('Spiller = ' + scoreArray[i].name);
-    console.log('Gold = ' + scoreArray[i].gold);
-    console.log('Skibe = ' + scoreArray[i].ships);
-
-    score.append(jQuery('<p></p>').text(scoreArray[i].name + ': Gold: ' + scoreArray[i].gold + ' Ships: ' + scoreArray[i].ships));
-    jQuery('#score').html(score); 
+    if (scoreArray[i].sitout != 0) { // player is sitting out
+      document.getElementById("score").innerHTML += `<span style="color:red"><span class="a">${scoreArray[i].name}(${scoreArray[i].sitout})</span><span class="b">${scoreArray[i].gold}</span><span class="b">${scoreArray[i].ships}</span></span><br>`;
+    } else {
+    document.getElementById("score").innerHTML += `<span class="a">${scoreArray[i].name}</span><span class="b">${scoreArray[i].gold}</span><span class="b">${scoreArray[i].ships}</span><br>`;
+    }
   }
 });
 
 socket.on('sitoutOn', function (turns) {
   sitout = turns;
   drawCardBoard();
-  //document.getElementById("warning").innerHTML = `<b>You sitout for ${ sitout } turns</b>`;
 });
 
 socket.on('sitoutOff', function () {
@@ -74,17 +68,9 @@ socket.on('sitoutOff', function () {
   drawCardBoard();
 });
 
-// socket.on('gotCard', function (text) {
-//   document.getElementById("warning").innerHTML = text;
-// });
-
 socket.on('updateInfoText', function (target, text) {
   document.getElementById(target).innerHTML = text;
 });
-
-// socket.on('gotStormCard', function (text) {
-//   document.getElementById("warning").innerHTML = text;
-// });
 
 socket.on('playedCards', function(cards) {
   playedCards = cards;
@@ -99,49 +85,6 @@ socket.on('resetPlayedCards', function() {
   drawCardBoard();
 });
 
-// DEFENSIVE PHASE
-
-// socket.on('setupTextDefensivePhase', function (fireOptions) {
-//   document.getElementById("info").innerHTML = `<p>You have ${fireOptions} defensive fire options.</p>`; 
-//   document.getElementById("info").innerHTML += "<p>Click on a ship to see it's fire options and then on a marked enemy ship.</p>";
-// });
-
-// socket.on('setupTextDefensiveSelect', function () {
-//   document.getElementById("info").innerHTML = "<p>Click on marked fire option to select as target. Click 'Cancel' to deselect your ship</p>";
-// });
-
-// socket.on('setupTextDefensiveNone', function () {
-//   document.getElementById("info").innerHTML = "<p>No ships to shoot at. Click 'Next' to end this phase</p>";
-// });
-
-
-// CARD PHASE
-
-// socket.on('setupTextCardPhase', function () {
-//   document.getElementById("info").innerHTML = "<p>Click on a card and then on 'play card' or click 'next phase' to skip this phase.</p>";
-// });
-
-// socket.on('setupTextEndCardPhase', function () { 
-//   document.getElementById("info").innerHTML = "<p>You played a card. Click 'next phase' to continue.</p>";
-// });
-
-// socket.on('setupTextGetGold', function () {
-//   document.getElementById("info").innerHTML = "<p>Now click 'get gold'</p>";
-// });
-
-// socket.on('setupTextGetGoldOnLand', function () {
-//   document.getElementById("info").innerHTML = "<p>Gold is on land. Select ship to pick up gold on land. Or click 'skip' to end card phase.</p>";
-// });
-
-// socket.on('setupTextGetGoldDieRoll', function (range) {
-//   document.getElementById("info").innerHTML = `<b>You must roll a ${range} to get gold on land.</b>`;
-// });
-
-// MOVEMENT PHASE
-// socket.on('setupTextMovementPhase', function () { 
-//   document.getElementById("info").innerHTML = "<p>Click 'roll die' to roll a die for movement</p>";
-// });
-
 socket.on('setupTextForMarkShip', function (moves, dieroll) {
   document.getElementById("die_field").innerHTML = `<img class='die' src='/js/libs/images/die_${dieroll}.png'>`;
   document.getElementById("info").innerHTML = `<p><em>You hit a ${dieroll}!</em></p>`;
@@ -155,33 +98,10 @@ socket.on('showDieRoll', function (dieroll) {
   dierollsound.play();
 });
 
-// socket.on('updateMovesLeft', function (moves) {
-//   document.getElementById("warning").innerHTML = `<b>You have ${moves} moves left</b>`;
-// });
-
 socket.on('clearMovesLeft', function () {
   document.getElementById("die_field").innerHTML = "";
   document.getElementById("warning").innerHTML = "";
 });
-
-// socket.on('setupTextForMove', function (moves) {
-//   document.getElementById("info").innerHTML = `<p>You can move ${moves} hexes.</p>`;
-//   document.getElementById("info").innerHTML += "<p>Click on a hex next to your ship on the map to move the ship into that hex.</p>";
-// });
-
-// ATTACK PHASE
-
-// socket.on('setupTextAttackPhase', function (fireOptions) {
-//   document.getElementById("info").innerHTML = `<p>You have ${fireOptions} fire options. Click on marked enemy ship to mark as target or 'skip' to exit fire phase</p>`; 
-// });
-
-// socket.on('setupTextAttackNone', function () {
-//   document.getElementById("info").innerHTML = "<p>No ships to shoot at. Click 'Next' to end your turn</p>";
-// });
-
-// socket.on('setupTextFire', function () {
-//   document.getElementById("info").innerHTML = "<p>Click 'Fire!' to shoot at targeted ship or 'cancel' to exit fire phase.</p>";
-// });
 
 socket.on('setupTextFireDieRoll', function (dieRoll) {
   document.getElementById("die_field").innerHTML = `<img class='die' src='/js/libs/images/die_${dieRoll}.png'>`;
@@ -193,15 +113,6 @@ socket.on('clearTextFireDieRoll', function () {
   document.getElementById("warning").innerHTML = "";
 
 });
-
-// socket.on('setupTextSelectTarget', function () {
-//   document.getElementById("info").innerHTML = "<p>click on ship to target.</p>";
-// });
-
-// socket.on('setupTextFireNothing', function () {
-//   document.getElementById("warning").innerHTML += "<p>You missed the target</p>";
-
-// });
 
 socket.on('setupTextFireGold', function () {
   document.getElementById("warning").innerHTML += "<p>You took the gold from target ship.</p>";
@@ -269,7 +180,6 @@ socket.on('gameStarts', function(id, coord) { // preload images, set PlayerId, a
 
   // hide div id="users"
   document.getElementById("users").style.display = "none";
-
 
   // pre-load images
   preloadImages();
@@ -351,11 +261,33 @@ socket.on('updatePlayerStatus', function (text, phase, turn) {
 socket.on('gameOver', function(scores){
   console.log('game over recieved with score = ' + JSON.stringify(scores));
 
-  //clearBoard();
-  //clearCards();
   colorRect(0, 0, canvas.width, canvas.height, 'lightblue'); // clear screen
   colorCardRect(0, 0, 200, 550, '#241106');
-  window.confirm(`Game over! ${scores[0].player} got ${scores[0].score} points. ${scores[1].player} got ${scores[1].score} points.`);
+
+  // remove canvas eventlisteners
+  canvas.removeEventListener('mousemove', updateMousePos);
+  canvas.removeEventListener("mousedown", mouseclicked);
+  canvas.removeEventListener("mouseout", clearBoard, false);
+
+  cardcanvas.removeEventListener('mousemove', updateMousePosCards);
+  cardcanvas.removeEventListener("mousedown", mouseclickedCards);
+  cardcanvas.removeEventListener("mouseout", clearCards, false);
+
+  
+
+
+  // build text for window.confirm
+  let gameOverText = "";
+  document.getElementById("warning").innerHTML = "<h1>GAME OVER!</h1><h2>Final scores:</h2>";
+
+   for (let rank = 0; rank < scores.length; rank++){
+     gameOverText += `${scores[rank].player} got ${scores[rank].score} points<br>`;
+   }
+  // write scores
+  document.getElementById("warning").innerHTML += gameOverText;
+  
+  // modal
+  //document.getElementById("myModal").innerHTML = `<div class='modal-content'><span class='close'>&times;</span><h1>Game Over!</h1>${gameOverText}</div>`;
 }); 
 
 

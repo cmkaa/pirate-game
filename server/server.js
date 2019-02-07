@@ -113,7 +113,7 @@ io.on('connection', (socket) => {
             // deal cards to players at start
             dealCards(players, cards).then(() => {
 
-              //STORM_CARDS = 5 add after dealing start cards to players
+              //STORM_CARDS = 6 add after dealing start cards to players
               for (var i=0; i<6; i++) {
               	let sitoutturns = Math.floor(Math.random() * 3) + 1; // sitout 1 to 3 turns
               	let card = {
@@ -1470,7 +1470,7 @@ function getScoreArray() {
   let playerSet = {};
   for (let i = 0; i < numberOfPlayers; i++) {
     //console.log('number of ships = ' + JSON.stringify(players[i].numberOfShips()))
-    playerSet = { name: players[i].name, gold: players[i].gold, ships: players[i].numberOfShips() }
+    playerSet = { name: players[i].name, gold: players[i].gold, ships: players[i].numberOfShips(), sitout: players[i].sitoutturns }
     //console.log('playerSet = ' + JSON.stringify(playerSet));
     scoreArray.push(playerSet);
     //console.log('scoreArray = ' + JSON.stringify(scoreArray));
@@ -1681,23 +1681,23 @@ function gameControl() {
         for (let i = 0; i < game.numberOfPlayers; i++) {
           io.to(players[i].socketid).emit('gameOver', scores);
         }
-      }
-
-
-      udpatePlayerStatus().then(() => {
-        console.log('player statuses updated');
-      });
-
-      if (players[game.activePlayer].sitoutturns > 0) {
-        // emit sitout to player
-        io.to(players[game.activePlayer].socketid).emit('sitoutOn', players[game.activePlayer].sitoutturns);
       } else {
-        io.to(players[game.activePlayer].socketid).emit('sitoutOff');
-      }
 
-      setupDefensivePhase(game, players).then(() => {
-        console.log('Defensive Phase setup has finished');
-      });
+        udpatePlayerStatus().then(() => {
+          console.log('player statuses updated');
+        });
+
+        if (players[game.activePlayer].sitoutturns > 0) {
+          // emit sitout to player
+          io.to(players[game.activePlayer].socketid).emit('sitoutOn', players[game.activePlayer].sitoutturns);
+        } else {
+          io.to(players[game.activePlayer].socketid).emit('sitoutOff');
+        }
+
+        setupDefensivePhase(game, players).then(() => {
+          console.log('Defensive Phase setup has finished');
+        });
+      }
       break;
     }
     case 2: { // card phase setup

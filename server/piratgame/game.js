@@ -16,7 +16,7 @@ class Game {
     this.cardareaaction = false; // ud af object?
     this.boardareaaction = false; // ud af object?
     this.goldInSea = [];
-    this.NUMBEROFTURNS = 50;
+    this.NUMBEROFTURNS = 2;
     this.tileGrid =
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 3, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 3, 1, 1, 0,
@@ -28,7 +28,7 @@ class Game {
         0, 1, 2, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 0,
         0, 1, 1, 3, 3, 3, 3, 3, 3, 3, 2, 1, 3, 1, 1, 0,
         0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 0,
-        0, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 1, 0,
+        0, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.BOARD_COLS = 16;
     this.BOARD_ROWS = 12;
