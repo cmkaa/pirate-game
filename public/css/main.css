@@ -159,6 +159,11 @@ h3 {
   border: 3px solid #c2474d;
 }
 
+.buttons_die_score_field .buttons_field #endgame-button {
+  background-color: #5a2d13;
+  border: 3px solid #c2474d;
+}
+
 .buttons_die_score_field #score {
   background-color: #ecb65e;
   border-radius: 5px;
