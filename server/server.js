@@ -19,10 +19,10 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 var users = new Users();
-var cards = []; // CARDS: main card stack
+var cards; // = []; // CARDS: main card stack
 var playedCards = [];
 var players = [];
-var game = new Game();
+var game; // game = new Game();
 
 console.log('is game setup ok? ' + JSON.stringify(game));
 
@@ -46,12 +46,14 @@ io.on('connection', (socket) => {
       return callback('Sorry game is full');
     }
 
+    // check if we allready have that user?
     socket.join(params.game);
     users.removeUser(socket.id);
     users.addUser(socket.id, params.name, params.game);
 
     // on join show common information to all users in the game
     io.to(params.game).emit('updateUserList', users.getUserList(params.game));
+    console.log('user list = ' + JSON.stringify(users));
 
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to Pirates Online'));
     socket.broadcast.to(params.game).emit('newMessage', generateMessage('Admin', `${params.name} has joined the game.`));
@@ -89,6 +91,8 @@ io.on('connection', (socket) => {
     });
 
     if (areweready === 1) {     
+      game = new Game(); // new
+      cards = []; // new
       io.to(user.game).emit('newMessage', generateMessage('Admin', 'Game has started...good luck!'));
       io.to(user.game).emit('hideReadyButton'); // removes the ready button - was gameStarts
 
@@ -97,12 +101,13 @@ io.on('connection', (socket) => {
         players.push(new Player(players.length, user.name, user.id));
       });
       game.numberOfPlayers = players.length;
+      console.log('players created = ' + JSON.stringify(players));
 
       for (let i = 0; i < game.numberOfPlayers; i++) {
         var cord = game.PLAYER_HABOUR_POSITIONS[i];
         players[i].shipscoords = [[cord.x, cord.y], [cord.x, cord.y], [cord.x, cord.y], [cord.x, cord.y]];
       }
-     
+     console.log('turn = ' + game.turn);
       // SETUP CARDS
       prepareCards(game, cards).then(() => { 
         //console.log('cards build: ' + JSON.stringify(cards));
@@ -112,7 +117,7 @@ io.on('connection', (socket) => {
             //console.log('cards shuffled again: ' + JSON.stringify(cards));
             // deal cards to players at start
             dealCards(players, cards).then(() => {
-
+              console.log('players = ' + JSON.stringify(players));
               //STORM_CARDS = 6 add after dealing start cards to players
               for (var i=0; i<6; i++) {
               	let sitoutturns = Math.floor(Math.random() * 3) + 1; // sitout 1 to 3 turns
@@ -143,9 +148,13 @@ io.on('connection', (socket) => {
       let scoreArray = getScoreArray();
 
       players.forEach(function (player) {
+        // hide endgame button
+        
+        io.to(player.socketid).emit('hideEndgameButton');
+
         // Update Top panel - scoreboard
         io.to(player.socketid).emit('showScore', scoreArray); // message to each player about their score
-        
+        console.log('player.id = ' + player.id);
         // Update Canvas
         let x = game.PLAYER_HABOUR_POSITIONS[player.id].x;
         let y = game.PLAYER_HABOUR_POSITIONS[player.id].y;
@@ -1665,15 +1674,11 @@ function gameControl() {
     case 1: { // defensive phase setup
       // update player status
 
-      // check for end game by turns
-
       if (game.turn > game.NUMBEROFTURNS) {
-        // end game
-        // who won?
         let scores = [];
         var playerId;
-        for ( playerId = 0; playerId < game.numberOfPlayers; playerId++) {
-          scores.push( {"player" : players[playerId].name , "score" : (players[playerId].gold) * 2 + players[playerId].numberOfShips()});
+        for (playerId = 0; playerId < game.numberOfPlayers; playerId++) {
+          scores.push({ "player": players[playerId].name, "score": (players[playerId].gold) * 2 + players[playerId].numberOfShips() });
         }
 
         // emit game over - scores for each player
@@ -1681,6 +1686,8 @@ function gameControl() {
         for (let i = 0; i < game.numberOfPlayers; i++) {
           io.to(players[i].socketid).emit('gameOver', scores);
         }
+       players = [];
+       
       } else {
 
         udpatePlayerStatus().then(() => {

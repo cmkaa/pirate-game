@@ -152,6 +152,12 @@ socket.on('hideActionButton', function () {
   document.getElementById("action-button").style.display = "none";
 });
 
+socket.on('hideEndgameButton', function () {
+  document.getElementById("endgame-button").style.display = "none";
+});
+
+
+
 socket.on('hideCancelButton', function () {
   document.getElementById("cancel-button").style.display = "none";
 });
@@ -233,6 +239,7 @@ socket.on('drawPlayerCanvas', function (tiles, topLeft) {
 socket.on('drawPlayerCards', function(cards, markedIndex) {
 playerCards = cards;
 selectedCardIndex = markedIndex;
+//console.log('player cards = ' + JSON.stringify(playerCards));
 drawCardBoard(); // draw player cards
 });
 
@@ -273,9 +280,6 @@ socket.on('gameOver', function(scores){
   cardcanvas.removeEventListener("mousedown", mouseclickedCards);
   cardcanvas.removeEventListener("mouseout", clearCards, false);
 
-  
-
-
   // build text for window.confirm
   let gameOverText = "";
   document.getElementById("warning").innerHTML = "<h1>GAME OVER!</h1><h2>Final scores:</h2>";
@@ -285,12 +289,14 @@ socket.on('gameOver', function(scores){
    }
   // write scores
   document.getElementById("warning").innerHTML += gameOverText;
+  document.getElementById("endgame-button").style.display = "inline";
+  document.getElementById("endgame-button").innerHTML = "End Game";
+
+  
   
   // modal
   //document.getElementById("myModal").innerHTML = `<div class='modal-content'><span class='close'>&times;</span><h1>Game Over!</h1>${gameOverText}</div>`;
 }); 
-
-
 
 socket.on('updateCombatInfo', function (text) {
   
@@ -328,6 +334,12 @@ var actionButton = jQuery('#action-button');
 actionButton.on('click', function () {
   console.log('user clicked action button')
   socket.emit('actionButtonClick');
+});
+
+var endgameButton = jQuery('#endgame-button');
+endgameButton.on('click', function () {
+  console.log('user clicked end game button');
+  document.location.href = '/';
 });
 
 var cancelButton = jQuery('#cancel-button');
