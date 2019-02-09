@@ -5,8 +5,8 @@ Online version of an old board game.
 ## Planned future work
 
 ```
-CSS
+SCSS
 Lobby features
-Messages from server to non active players
 Responsive design
+Image as map in canvas
 ```
