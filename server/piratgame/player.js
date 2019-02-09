@@ -26,6 +26,18 @@ class Player {
     return ships; 
   }
 
+  numberOfShipCards() {
+    let shipCards = 0;
+    if (this.cards.length > 0){ // only if player got cards
+      for (let i = 0; i < this.cards.length; i++) { // run through cards
+        if (this.cards[i].suit === 'ship') {
+          shipCards++;
+        }
+      }
+    }
+    return shipCards;
+  }
+
 }
 
 module.exports = { Player }

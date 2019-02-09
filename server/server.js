@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
     // }
 
     // control max number of players in each game 
-    if (users.getUserList(params.game).length > 1) { // max 2 players now
+    if (users.getUserList(params.game).length > 4) { // max 4 players now
       return callback('Sorry game is full');
     }
 
@@ -1687,11 +1687,11 @@ function gameControl() {
 
         // find winner(s)
         for (playerId = 0; playerId < game.numberOfPlayers; playerId++) {
-          if (((players[playerId].gold) * 2 + players[playerId].numberOfShips()) > topscore) {
-            topscore = ((players[playerId].gold) * 2 + players[playerId].numberOfShips());
+          if (((players[playerId].gold) * 2 + players[playerId].numberOfShips()) + players[playerId].numberOfShipCards() > topscore) {
+            topscore = ((players[playerId].gold) * 2 + players[playerId].numberOfShips() + players[playerId].numberOfShipCards());
             winners = []; // new top score so clear
             winners.push(playerId);
-          } else if (((players[playerId].gold) * 2 + players[playerId].numberOfShips()) === topscore) {
+          } else if (((players[playerId].gold) * 2 + players[playerId].numberOfShips() + players[playerId].numberOfShipCards()) === topscore) {
             winners.push(playerId); // same topscore so push to winners
           }
         }
@@ -1703,7 +1703,7 @@ function gameControl() {
 
         // build scoreboard for all players - scores
         for (playerId = 0; playerId < game.numberOfPlayers; playerId++) {
-          scores.push({ "player": players[playerId].name, "score": (players[playerId].gold) * 2 + players[playerId].numberOfShips() });
+          scores.push({ "player": players[playerId].name, "score": (players[playerId].gold) * 2 + players[playerId].numberOfShips() + players[playerId].numberOfShipCards() });
         }
 
         // emit game over - scores for each player
