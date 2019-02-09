@@ -264,8 +264,9 @@ socket.on('updatePlayerStatus', function (text, phase, turn, maxturns) {
   jQuery('#status').html(html); 
 }); 
 
-socket.on('gameOver', function(scores){
+socket.on('gameOver', function (winnersList, scores) {
   console.log('game over recieved with score = ' + JSON.stringify(scores));
+  console.log('winnersList = ' + JSON.stringify(winnersList));
 
   colorRect(0, 0, canvas.width, canvas.height, 'lightblue'); // clear screen
   colorCardRect(0, 0, 200, 550, '#241106');
@@ -286,16 +287,26 @@ socket.on('gameOver', function(scores){
   let gameOverText = "";
   document.getElementById("warning").innerHTML = "<h1><b>Game over!</b></h1><h2>Final scores:</h2>";
   document.getElementById("warning").innerHTML += "<h4><span class='c'><b>Player</b></span><span class='d'><b>Score</b></span></h4>";
+
   for (let rank = 0; rank < scores.length; rank++) {
     document.getElementById("warning").innerHTML += `<span class="c">${scores[rank].player}</span><span class="d">${scores[rank].score}</span><br>`;
+  }
+
+  if (winnersList.length > 1) {
+    document.getElementById("warning").innerHTML += "<h2><b>Winners are:</b></h2>";
+  } else {
+    document.getElementById("warning").innerHTML += "<h2><b>Winner is:</b></h2>";
+  }
+
+  for (let i = 0; i < winnersList.length; i++) {
+    document.getElementById("warning").innerHTML += `<h3>${winnersList[i].winner}</h3>`;
   }
 
   // write scores
   document.getElementById("warning").innerHTML += gameOverText;
   document.getElementById("endgame-button").style.display = "inline";
   document.getElementById("endgame-button").innerHTML = "End Game";
-
-  }); 
+}); 
 
 socket.on('updateCombatInfo', function (text) {
   

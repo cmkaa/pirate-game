@@ -9,14 +9,14 @@ class Game {
     
     this.turn = 1;
     this.activePlayer = 0;
-    this.activePhase = 2; // starting in card phase
+    this.activePhase = 1; // starting in card phase
     this.dieRoll = 0; // ud af object?
     this.movesLeft = 0; 
 
     this.cardareaaction = false; // ud af object?
     this.boardareaaction = false; // ud af object?
     this.goldInSea = [];
-    this.NUMBEROFTURNS = 2;
+    this.NUMBEROFTURNS = 10;
     this.tileGrid =
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 3, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 3, 1, 1, 0,

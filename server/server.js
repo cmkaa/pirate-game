@@ -1681,19 +1681,38 @@ function gameControl() {
       if (game.turn > game.NUMBEROFTURNS) {
         let scores = [];
         var playerId;
+        let topscore = 0;
+        let winners = [];
+        let winnersList = [];
+
+        // find winner(s)
+        for (playerId = 0; playerId < game.numberOfPlayers; playerId++) {
+          if (((players[playerId].gold) * 2 + players[playerId].numberOfShips()) > topscore) {
+            topscore = ((players[playerId].gold) * 2 + players[playerId].numberOfShips());
+            winners = []; // new top score so clear
+            winners.push(playerId);
+          } else if (((players[playerId].gold) * 2 + players[playerId].numberOfShips()) === topscore) {
+            winners.push(playerId); // same topscore so push to winners
+          }
+        }
+
+        // build winner array - winnerList
+        for (let i = 0; i < winners.length; i++) {
+          winnersList.push({ "winner": players[winners[i]].name, "topscore": topscore })
+        }
+
+        // build scoreboard for all players - scores
         for (playerId = 0; playerId < game.numberOfPlayers; playerId++) {
           scores.push({ "player": players[playerId].name, "score": (players[playerId].gold) * 2 + players[playerId].numberOfShips() });
         }
 
         // emit game over - scores for each player
-        console.log('emitting game over - with scores = ' + JSON.stringify(scores));
         for (let i = 0; i < game.numberOfPlayers; i++) {
-          io.to(players[i].socketid).emit('gameOver', scores);
+          io.to(players[i].socketid).emit('gameOver', winnersList, scores);
           io.to(players[i].socketid).emit('updateInfoText', "info", "");
-
         }
-       players = [];
-       
+        players = [];
+
       } else {
 
         udpatePlayerStatus().then(() => {

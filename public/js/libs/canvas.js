@@ -336,7 +336,7 @@ function drawTilesInViewNew() {
 
               switch (code.charAt(3)) {
                 case '1': { // marked ship
-                  coutlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
+                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
                   break;
                 }
                 case '2': { // selected ship
