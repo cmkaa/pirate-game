@@ -47,8 +47,8 @@ socket.on('updateUserList', function (users) {
 });
 
 socket.on('showScore', function (scoreArray) {
-  document.getElementById("score").innerHTML = "<h3>Score</h3>";
-  document.getElementById("score").innerHTML += "<span class='a'><b>Player</b></span><span class='b'><b>Gold</b></span><span class='b'><b>Ships</b></span><br>";
+  //document.getElementById("score").innerHTML = "<h3>Score</h3>";
+  document.getElementById("score").innerHTML = "<h4><span class='a'><b>Player</b></span><span class='b'><b>Gold</b></span><span class='b'><b>Ships</b></span></h4>";
   for (let i = 0; i < scoreArray.length; i++){
     if (scoreArray[i].sitout != 0) { // player is sitting out
       document.getElementById("score").innerHTML += `<span style="color:red"><span class="a">${scoreArray[i].name}(${scoreArray[i].sitout})</span><span class="b">${scoreArray[i].gold}</span><span class="b">${scoreArray[i].ships}</span></span><br>`;
@@ -156,8 +156,6 @@ socket.on('hideEndgameButton', function () {
   document.getElementById("endgame-button").style.display = "none";
 });
 
-
-
 socket.on('hideCancelButton', function () {
   document.getElementById("cancel-button").style.display = "none";
 });
@@ -254,12 +252,13 @@ socket.on('readyButtonMessage', function (message) {
   jQuery('#messages').prepend(html);
 });
 
-socket.on('updatePlayerStatus', function (text, phase, turn) {
+socket.on('updatePlayerStatus', function (text, phase, turn, maxturns) {
   var template = jQuery('#player-status-template').html(); // html() henter HTML koden inde fra #location-message-template id'et
   var html = Mustache.render(template, {
     playing: text,
     phase: phase,
     turn: turn,
+    totalturns: maxturns
   });
 
   jQuery('#status').html(html); 
@@ -280,23 +279,23 @@ socket.on('gameOver', function(scores){
   cardcanvas.removeEventListener("mousedown", mouseclickedCards);
   cardcanvas.removeEventListener("mouseout", clearCards, false);
 
+  // remove player status
+  document.getElementById("status").style.display = "none";
+
   // build text for window.confirm
   let gameOverText = "";
-  document.getElementById("warning").innerHTML = "<h1>GAME OVER!</h1><h2>Final scores:</h2>";
+  document.getElementById("warning").innerHTML = "<h1><b>Game over!</b></h1><h2>Final scores:</h2>";
+  document.getElementById("warning").innerHTML += "<h4><span class='c'><b>Player</b></span><span class='d'><b>Score</b></span></h4>";
+  for (let rank = 0; rank < scores.length; rank++) {
+    document.getElementById("warning").innerHTML += `<span class="c">${scores[rank].player}</span><span class="d">${scores[rank].score}</span><br>`;
+  }
 
-   for (let rank = 0; rank < scores.length; rank++){
-     gameOverText += `${scores[rank].player} got ${scores[rank].score} points<br>`;
-   }
   // write scores
   document.getElementById("warning").innerHTML += gameOverText;
   document.getElementById("endgame-button").style.display = "inline";
   document.getElementById("endgame-button").innerHTML = "End Game";
 
-  
-  
-  // modal
-  //document.getElementById("myModal").innerHTML = `<div class='modal-content'><span class='close'>&times;</span><h1>Game Over!</h1>${gameOverText}</div>`;
-}); 
+  }); 
 
 socket.on('updateCombatInfo', function (text) {
   

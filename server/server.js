@@ -53,6 +53,10 @@ io.on('connection', (socket) => {
 
     // on join show common information to all users in the game
     io.to(params.game).emit('updateUserList', users.getUserList(params.game));
+    io.to(params.game).emit('hideActionButton');
+    io.to(params.game).emit('hideCancelButton');
+    io.to(params.game).emit('hideEndgameButton');
+
     console.log('user list = ' + JSON.stringify(users));
 
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to Pirates Online'));
@@ -1508,10 +1512,10 @@ function udpatePlayerStatus() {
     players.forEach(function (player) {
       if (game.activePlayer === player.id) { // is activeplayer
         text = "Your turn!"
-        io.to(player.socketid).emit('updatePlayerStatus', text, getPhaseName(game.activePhase), game.turn);
+        io.to(player.socketid).emit('updatePlayerStatus', text, getPhaseName(game.activePhase), game.turn, game.NUMBEROFTURNS);
       } else {
         text = `${players[game.activePlayer].name} is playing`
-        io.to(player.socketid).emit('updatePlayerStatus', text, getPhaseName(game.activePhase), game.turn);
+        io.to(player.socketid).emit('updatePlayerStatus', text, getPhaseName(game.activePhase), game.turn, game.NUMBEROFTURNS);
       }
     });
     resolve();
@@ -1685,6 +1689,8 @@ function gameControl() {
         console.log('emitting game over - with scores = ' + JSON.stringify(scores));
         for (let i = 0; i < game.numberOfPlayers; i++) {
           io.to(players[i].socketid).emit('gameOver', scores);
+          io.to(players[i].socketid).emit('updateInfoText', "info", "");
+
         }
        players = [];
        
@@ -1796,15 +1802,7 @@ function nextPlayer() {
     io.to(player.socketid).emit('setupTextEndPlayer');
 
     game.turn++;
-
-   // check for game over by turns - here or in gameControl?
-    // if (game.turn > game.NUMBEROFTURNS){
-
-    // }
-
-
     game.activePlayer = 0;
-    // emit?
 
   } else { // next players turn
     // clean up activeplayer text and buttons before changing player
@@ -1813,7 +1811,6 @@ function nextPlayer() {
     io.to(player.socketid).emit('setupTextEndPlayer');
 
     game.activePlayer++;
-    // emit?
   }
   gameControl();
 }

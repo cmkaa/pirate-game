@@ -65,12 +65,15 @@
 
   <script id="player-status-template" type="text/template">
     <div class="player-status">
+      <!-- <div class="message__title">
+         
+      </div>-->
       <div class="message__body">
-        <h3>Turn: {{turn}} - {{phase}}</h3>
+        <h3>{{playing}}<br>
+        <b>Phase: {{phase}}</b></h3>
+        <h3>Turn: {{turn}} of {{totalturns}}</h3>
       </div>
-      <div class="message__title">
-         <h3>{{playing}}</h3>
-      </div>
+
     </div>
   </script> 
 
