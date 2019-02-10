@@ -626,38 +626,122 @@ function drawShipBox() {
 
     // shipbox = [{ shipid: 0, marked: true, selected: false, hextype: -1, gold: false }, {}, {}, {}]
     console.log('switch is = ' + shipsBox[i].hextype);
-
+    console.log('playerId = ' + playerId);
     switch (shipsBox[i].hextype) {
       case -1: // ship is sunk
         // draw hex = red square
         colorCardRect(i * 50, 0, 50, 50, 'red');
         // draw ship
-        cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3 , 44, 44);
+        switch (playerId) {
+          case 0:
+            cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+            break;
+        
+          case 1:
+            cardcanvasContext.drawImage(boatPic2, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 2:
+            cardcanvasContext.drawImage(boatPic3, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 3:
+            cardcanvasContext.drawImage(boatPic4, (i * 50) + 3, 3, 44, 44);
+            break;
+        }
         break;
+
       case 1: // land  '#cab796'
         // draw hex
         colorCardRect(i * 50, 0, 50, 50, '#cab796');
-        cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+        //cardcanvasContext.drawImage(`boatPic${playerId}`, (i * 50) + 3, 3, 44, 44);
+        switch (playerId) {
+          case 0:
+            cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+            break;
 
+          case 1:
+            cardcanvasContext.drawImage(boatPic2, (i * 50) + 3, 3, 44, 44);
+            break;
 
+          case 2:
+            cardcanvasContext.drawImage(boatPic3, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 3:
+            cardcanvasContext.drawImage(boatPic4, (i * 50) + 3, 3, 44, 44);
+            break;
+        }
         break;
+
       case 2: // ship is in habour
         // draw hex = dark grey
         console.log('case 2 - now we colorRect at x = ' + i * 50 + ' and y= ' + 0);
         colorCardRect(i * 50, 0, 50, 50, 'grey');
-        cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+        //cardcanvasContext.drawImage(`boatPic${playerId}`, (i * 50) + 3, 3, 44, 44);
+        switch (playerId) {
+          case 0:
+            cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 1:
+            cardcanvasContext.drawImage(boatPic2, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 2:
+            cardcanvasContext.drawImage(boatPic3, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 3:
+            cardcanvasContext.drawImage(boatPic4, (i * 50) + 3, 3, 44, 44);
+            break;
+        }
         break;
 
       case 3: // sea '#cbe1e1'
         colorCardRect(i * 50, 0, 50, 50, '#cbe1e1');
-        cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+        //cardcanvasContext.drawImage(`boatPic${playerId}`, (i * 50) + 3, 3, 44, 44);
+        switch (playerId) {
+          case 0:
+            cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 1:
+            cardcanvasContext.drawImage(boatPic2, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 2:
+            cardcanvasContext.drawImage(boatPic3, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 3:
+            cardcanvasContext.drawImage(boatPic4, (i * 50) + 3, 3, 44, 44);
+            break;
+        }
         break;
 
       case 4: // gold '#cbe1e1'
         // draw gold marking
         colorCardRect(i * 50, 0, 50, 50, 'gold');
         //drawGoldInSea(i * 50, 0, 'gold'); // TODO2 - is it working?
-        cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+        //cardcanvasContext.drawImage(`boatPic${playerId}`, (i * 50) + 3, 3, 44, 44);
+        switch (playerId) {
+          case 0:
+            cardcanvasContext.drawImage(boatPic1, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 1:
+            cardcanvasContext.drawImage(boatPic2, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 2:
+            cardcanvasContext.drawImage(boatPic3, (i * 50) + 3, 3, 44, 44);
+            break;
+
+          case 3:
+            cardcanvasContext.drawImage(boatPic4, (i * 50) + 3, 3, 44, 44);
+            break;
+        }
 
         break;
     }

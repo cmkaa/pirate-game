@@ -501,10 +501,14 @@ io.on('connection', (socket) => {
 
                   // roll die to get gold
                   let dieResult = 1 + Math.floor(Math.random() * 6);
-
+                  // emit die roll
+                  io.to(player.socketid).emit('showDieRoll', dieResult);
+                  
                   if (dieResult >= game.goldRange) {
                     // got the gold
                     //console.log('you got the gold!!!')
+                    io.to(player.socketid).emit('updateInfoText', "warning", `You got the gold!`);
+
                     player.shipsgold[game.selectedShip] = 1;
 
                     // remove card at index markedCard from player.cards
@@ -518,6 +522,8 @@ io.on('connection', (socket) => {
 
                   } else {
                     // didnt get gold
+                    io.to(player.socketid).emit('updateInfoText', "warning", `You didn't get the gold! Better luck next time.`);
+
                     //console.log('better luck next time!!!')
                     // keeping treasure card
                     gameControl();
@@ -622,13 +628,14 @@ io.on('connection', (socket) => {
                   game.selectedShip = -1;
                   game.selectedCardIndex = -1;
                   // emit cards to player
+                  io.to(player.socketid).emit('updateInfoText', "warning", `<p>You played treassure and diver card and got gold on ship!</p>`);
                   io.to(player.socketid).emit('drawPlayerCards', player.cards, game.selectedCardIndex); 
                   io.to(player.socketid).emit('playedCards', playedCards); // emit both played cards
 
                   // emit activeplayer played a diver card
                   players.forEach(function (player) {
                     if (player.id != players[game.activePlayer].id) { // not to active player
-                      io.to(player.socketid).emit('updateInfoText', "warning", `<p>${players[game.activePlayer].name} played a diver card and got gold on ship!</p>`);
+                      io.to(player.socketid).emit('updateInfoText', "warning", `<p>${players[game.activePlayer].name} played treassure and diver card and got gold on ship!</p>`);
                     }
                   }); 
 
@@ -1988,7 +1995,6 @@ function setupDefensivePhase() {
 
 function handleTreasureCard() {
   return new Promise(resolve => {
-    console.log('we handled treasure card played now :-) ');
     let player = players[game.activePlayer];
     // check if land or sea tressure
     console.log('selectedCardIndex = ' + game.selectedCardIndex);
@@ -2017,7 +2023,15 @@ function handleTreasureCard() {
                 player.shipsgold[id] = 1;
                 // set text for ending card phase
                 //io.to(player.socketid).emit('setupTextEndCardPhase');
-                io.to(player.socketid).emit('updateInfoText', "info", "<p>You played a card. Click 'next phase' to continue.</p>");
+                io.to(player.socketid).emit('updateInfoText', "info", "<p>You played a diver card and got gold on ship. Click 'next phase' to continue.</p>");
+
+                // emit played cards and got gold to other players
+                players.forEach(function (player) {
+                  // update score
+                  if (player.id != players[game.activePlayer].id) { // not to active player
+                    io.to(player.socketid).emit('updateInfoText', "warning", `<p>${players[game.activePlayer].name} played a treasure and diver card and got gold on ship!</p>`);
+                  }
+                }); 
 
                 // hide action button and setup cancelButton "next phase" to move on.
                 io.to(player.socketid).emit('hideActionButton');
