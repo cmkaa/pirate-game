@@ -1881,6 +1881,10 @@ function setupAttackPhase() {
 
   return new Promise(resolve => {
     let player = players[game.activePlayer];
+
+    // emit resetPlayedCards
+    io.to(player.socketid).emit('resetPlayedCards');
+    playedCards = [];
     //game.selectedShip = -1;
     console.log('HANDLE ATTACK PHASE');
     console.log('Active player is player id = ' + JSON.stringify(player));
@@ -1902,10 +1906,10 @@ function setupAttackPhase() {
           game.fireOptions = list;
           // emit clear moves
           io.to(player.socketid).emit('clearMovesLeft');
-          // emit resetPlayedCards
-          io.to(player.socketid).emit('resetPlayedCards');
-          // reset playedCards
-          playedCards = [];
+          // // emit resetPlayedCards
+          // io.to(player.socketid).emit('resetPlayedCards');
+          // // reset playedCards
+          // playedCards = [];
 
           // we get fire options list 
           let numberOfFireOptions = game.fireOptions.length;
@@ -1932,6 +1936,7 @@ function setupAttackPhase() {
     } else {
       io.to(player.socketid).emit('updateInfoText', "info", "<p>No ships to shoot at. Click 'Next' to end your turn</p>");
       io.to(player.socketid).emit('showCancelButton', "Next");
+
     }
     resolve();
   });
