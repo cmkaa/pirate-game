@@ -497,7 +497,7 @@ io.on('connection', (socket) => {
                 // to get gold
                 console.log('do we have a range to gold on land set ? ? ' + game.goldRange);
                 if (game.goldRange > 0) {  // if we have a range to gold on land
-                  //console.log('lets roll a die to get golf on land!');
+                  console.log('lets roll a die to get golf on land!');
 
                   // roll die to get gold
                   let dieResult = 1 + Math.floor(Math.random() * 6);
@@ -1683,6 +1683,9 @@ function gameControl() {
   emitShipBox();
   switch (game.activePhase) {
     case 1: { // defensive phase setup
+      // TO DO ! test reset game.goldrange - might be needed - we might forget to clear this elsewhere
+      // we might need to check treassure on land near map edges regarding range!
+      //game.goldRange = -1;
       // update player status
 
       if (game.turn > game.NUMBEROFTURNS) {
@@ -2196,10 +2199,138 @@ function setupCardPhase() {
   });
 }
 
+// function getGrid(coords) {
+//   return new Promise(resolve => {
+
+//     let grid = [];
+//     let i = 0;
+//     // evaluate on coords - can we have canvas inside board?
+//     // test cols and rows if all of grid for canvas is within board
+//     // left and top are ok - x>0 and y>0 allways
+//     if (coords[0] > game.BOARD_COLS - game.canvasCols + 2) { coords[0] = game.BOARD_COLS - game.canvasCols + 2 }
+//     if (coords[1] > game.BOARD_ROWS - game.canvasRows + 2) { coords[1] = game.BOARD_ROWS - game.canvasRows + 2 }
+
+//     // Main loop
+//     for (let y = coords[1]; y < coords[1] + game.canvasRows - 2; y++) { // from y = topleftcoord - row
+//       for (let x = coords[0]; x < coords[0] + game.canvasCols - 2; x++) { // from x = topleftcoord - col
+//         grid[i] = game.tileGrid[coordToArrayIndex(x, y)] // tjek map value at that index and assign to grid
+
+//         // gold in hex? Run through goldInSea array and change grid id if gold there
+//         for (let hex = 0; hex < game.goldInSea.length; hex++) {
+//           if (x === game.goldInSea[hex][0] && y === game.goldInSea[hex][1]) {
+//             grid[i] = 4; // gold code
+//           }
+//         }
+
+//         // do we have a ship here?
+//         for (let p = 0; p < players.length; p++) { // for each player
+//           for (let ship = 3; ship >= 0; ship--) { // for each ship 
+
+//             if ((players[p].shipscoords[ship][0] === x) && (players[p].shipscoords[ship][1] === y)) { // player's ship in this hex
+//               //console.log('ship found!: player = ' + p + 'ship = ' + ship);
+
+//               // building code for ship
+//               code = '1'; // first digit indicating a ship
+//               code += players[p].id; // second digit
+//               code += players[p].shipsgold[ship]; // third digit - Gold
+
+//               // TO DO play with if structure - can it be done smarter?
+
+//               // fireOption marking
+//               if (game.activePhase === 4) {
+//                 for (let k = 0; k < game.fireOptions.length; k++) { // for each fireoption
+//                   if (p === game.fireOptions[k][0] && ship === game.fireOptions[k][1]) {
+//                     // this ship is in fireOptions array
+//                     //console.log('we marked a ship with code 4. p = '+ p + ' ship = ' + ship);
+//                     code += '4';
+//                   }
+//                 }
+//               }
+
+//               if (game.activePhase === 1) {
+//                 console.log('game.markedDefensiveFireShips = ' + JSON.stringify(game.markedDefensiveFireShips));
+
+//                 // is it a ship to mark in game.markedDefensiveFireShips
+//                 for (let i = 0; i < 4; i++) { // all ships for activePlayer
+//                   if ((game.markedDefensiveFireShips[i] === 1) && (x === players[game.activePlayer].shipscoords[i][0] && y === players[game.activePlayer].shipscoords[i][1])) {
+//                     //console.log('we marked a defensive fire ship with 1')  
+//                     code += '1';
+//                   }
+//                 }
+
+//                 // is it a ship to mark in game.markedDefensiveFireTargets
+//                 console.log('game.markedDefensiveFireTargets = ' + JSON.stringify(game.markedDefensiveFireTargets));
+
+//                 for (let i = 0; i < game.markedDefensiveFireTargets.length; i++) {
+//                   if (
+//                     x === players[game.markedDefensiveFireTargets[i].player].shipscoords[game.markedDefensiveFireTargets[i].ship][0]
+//                     &&
+//                     y === players[game.markedDefensiveFireTargets[i].player].shipscoords[game.markedDefensiveFireTargets[i].ship][1]
+//                   ) {
+//                     // we must mark this ship
+//                     code += '4';
+
+//                   }
+//                 }
+
+//               }
+
+//               if (game.activePhase === 2) {
+//                 console.log('game.markedDefensiveFireShips (used for diver card)= ' + JSON.stringify(game.markedDefensiveFireShips));
+
+//                 // is it a ship to mark for use of diver card
+//                 for (let i = 0; i < 4; i++) { // all ships for activePlayer
+//                   if ((game.markedDefensiveFireShips[i] === 1) && (x === players[game.activePlayer].shipscoords[i][0] && y === players[game.activePlayer].shipscoords[i][1])) {
+//                     //console.log('we marked a ship that can use diver with 1')  
+//                     code += '1'; // mark as marked
+//                   } else if (ship === game.selectedShip && p === game.activePlayer) {
+//                     code += '2'; // mark as selected
+//                   }
+//                 }
+//               }
+
+//               if (p === game.activePlayer && game.activePhase != 2) { //  && !=2 to avoid problem in card phase 
+//                 if (game.markedShip != -1 && ship === game.markedShip) { // match 
+//                   code += '1'; // show as marked
+//                 } else if (game.selectedShip != -1 && ship === game.selectedShip) {
+//                   code += '2'; // show as selected
+//                 } else {
+//                   code += '0';
+//                 }
+//               } else if ((p === game.selectedTarget[0] && game.selectedTarget[1] === ship)) { // if ship belongs to player and ship in selected target
+
+//                 // this is for offensive fire phase
+//                 if (game.activePhase === 4) {
+//                   code = setCharAt(code, 3, '3'); // selected target allready marked as fireoption in 4 digit
+//                 } else if (game.activePhase === 1) {
+//                   // this is for defensive fire phase
+//                   code += '3'; // show as selected
+//                 }
+//               } else {
+//                 code += '0'; // no markings on ship TO DO this adds extra 0 on all non activeplayer ships!!!
+//               }
+
+//               // TODO!!!! check if grid[i] === 4 (gold in sea) then we need to mark for that!
+//               if (grid[i] === 4) {
+//                 grid[i] = code+'gold';
+//               } else {
+//               grid[i] = code;  // tjek map value at that index and assign to grid 
+//               }
+//             }
+//           }
+//         }
+//         i++;
+//       }
+//     }
+//     resolve(grid);
+//   });
+// }
+
 function getGrid(coords) {
   return new Promise(resolve => {
 
     let grid = [];
+    let hex = {};
     let i = 0;
     // evaluate on coords - can we have canvas inside board?
     // test cols and rows if all of grid for canvas is within board
@@ -2210,28 +2341,28 @@ function getGrid(coords) {
     // Main loop
     for (let y = coords[1]; y < coords[1] + game.canvasRows - 2; y++) { // from y = topleftcoord - row
       for (let x = coords[0]; x < coords[0] + game.canvasCols - 2; x++) { // from x = topleftcoord - col
-        grid[i] = game.tileGrid[coordToArrayIndex(x, y)] // tjek map value at that index and assign to grid
+        hex = { goldInHex: false, shipInHex: { playerId: null, marking: "none", goldOnShip: 0 } };
 
         // gold in hex? Run through goldInSea array and change grid id if gold there
-        for (let hex = 0; hex < game.goldInSea.length; hex++) {
-          if (x === game.goldInSea[hex][0] && y === game.goldInSea[hex][1]) {
-            grid[i] = 4; // gold code
+        for (let hexCounter = 0; hexCounter < game.goldInSea.length; hexCounter++) {
+          if (x === game.goldInSea[hexCounter][0] && y === game.goldInSea[hexCounter][1]) {
+            hex.goldInHex = true;
+            console.log('Hey we found gold in hex!!!!!');
           }
         }
 
         // do we have a ship here?
         for (let p = 0; p < players.length; p++) { // for each player
-          for (let ship = 3; ship >= 0; ship--) { // for each ship 
+          for (let ship = 3; ship >= 0; ship--) { // for each ship TO DO - don't hardcode number of players here - ship = 3
 
             if ((players[p].shipscoords[ship][0] === x) && (players[p].shipscoords[ship][1] === y)) { // player's ship in this hex
               //console.log('ship found!: player = ' + p + 'ship = ' + ship);
-
+              
               // building code for ship
-              code = '1'; // first digit indicating a ship
-              code += players[p].id; // second digit
-              code += players[p].shipsgold[ship]; // third digit - Gold
+              hex.shipInHex.playerId = players[p].id;
+              hex.shipInHex.goldOnShip = players[p].shipsgold[ship];
 
-              // TO DO play with if structure - can it be done smarter?
+              // Check marking....
 
               // fireOption marking
               if (game.activePhase === 4) {
@@ -2239,7 +2370,7 @@ function getGrid(coords) {
                   if (p === game.fireOptions[k][0] && ship === game.fireOptions[k][1]) {
                     // this ship is in fireOptions array
                     //console.log('we marked a ship with code 4. p = '+ p + ' ship = ' + ship);
-                    code += '4';
+                    hex.shipInHex.marking = "attackMarked";
                   }
                 }
               }
@@ -2251,7 +2382,7 @@ function getGrid(coords) {
                 for (let i = 0; i < 4; i++) { // all ships for activePlayer
                   if ((game.markedDefensiveFireShips[i] === 1) && (x === players[game.activePlayer].shipscoords[i][0] && y === players[game.activePlayer].shipscoords[i][1])) {
                     //console.log('we marked a defensive fire ship with 1')  
-                    code += '1';
+                    hex.shipInHex.marking = "marked";
                   }
                 }
 
@@ -2265,55 +2396,55 @@ function getGrid(coords) {
                     y === players[game.markedDefensiveFireTargets[i].player].shipscoords[game.markedDefensiveFireTargets[i].ship][1]
                   ) {
                     // we must mark this ship
-                    code += '4';
-
+                    hex.shipInHex.marking = "attackMarked";
                   }
                 }
 
               }
 
               if (game.activePhase === 2) {
-                console.log('game.markedDefensiveFireShips (used for diver card)= ' + JSON.stringify(game.markedDefensiveFireShips));
-
-                // is it a ship to mark for use of diver card
                 for (let i = 0; i < 4; i++) { // all ships for activePlayer
                   if ((game.markedDefensiveFireShips[i] === 1) && (x === players[game.activePlayer].shipscoords[i][0] && y === players[game.activePlayer].shipscoords[i][1])) {
-                    //console.log('we marked a ship that can use diver with 1')  
-                    code += '1'; // mark as marked
+                    hex.shipInHex.marking = "marked";
                   } else if (ship === game.selectedShip && p === game.activePlayer) {
-                    code += '2'; // mark as selected
+                    hex.shipInHex.marking = "selected";
                   }
                 }
               }
 
               if (p === game.activePlayer && game.activePhase != 2) { //  && !=2 to avoid problem in card phase 
                 if (game.markedShip != -1 && ship === game.markedShip) { // match 
-                  code += '1'; // show as marked
+                  //code += '1'; // show as marked
+                  hex.shipInHex.marking = "marked";
+
                 } else if (game.selectedShip != -1 && ship === game.selectedShip) {
-                  code += '2'; // show as selected
-                } else {
-                  code += '0';
-                }
+                  //code += '2'; // show as selected
+                  hex.shipInHex.marking = "selected";
+
+                } 
+ 
               } else if ((p === game.selectedTarget[0] && game.selectedTarget[1] === ship)) { // if ship belongs to player and ship in selected target
 
                 // this is for offensive fire phase
                 if (game.activePhase === 4) {
-                  code = setCharAt(code, 3, '3'); // selected target allready marked as fireoption in 4 digit
+                  //code = setCharAt(code, 3, '3'); // selected target allready marked as fireoption in 4 digit
+                  hex.shipInHex.marking = "attackSelected";
+
                 } else if (game.activePhase === 1) {
                   // this is for defensive fire phase
-                  code += '3'; // show as selected
-                }
-              } else {
-                code += '0'; // no markings on ship TO DO this adds extra 0 on all non activeplayer ships!!!
-              }
+                  hex.shipInHex.marking = "attackSelected";
 
-              grid[i] = code;  // tjek map value at that index and assign to grid 
+                }
+              } 
             }
+
           }
         }
         i++;
+        grid.push(hex);
       }
     }
+    console.log('grid = ' + JSON.stringify(grid));
     resolve(grid);
   });
 }

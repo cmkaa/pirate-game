@@ -68,6 +68,9 @@ diverCard.src = '/js/libs/images/diver.png';
 var treasureCard = new Image();
 treasureCard.src = '/js/libs/images/treasuremap_100x150.png';
 
+var mapImage = new Image();
+mapImage.src = '/js/libs/images/map700_500.png';
+
 //PRE LOAD SOUNDS:
 var cannon = new Audio();
 cannon.src = '/js/libs/sound/cannon.mp3';
@@ -77,7 +80,7 @@ var dierollsound = new Audio();
 dierollsound.src = '/js/libs/sound/dieroll.mp3';
 
 function preloadImages() { // TO DO: are we sure they all get loaded ? make a promise function ?
-  var imageArray = new Array('/js/libs/images/ship_storm_100x150.png', '/js/libs/images/ship_100x150.png', '/js/libs/images/ship_crash_100x150.png', '/js/libs/images/treasure_100x150.png', '/js/libs/images/treasuremap_100x150.png', '/js/libs/images/boat50x50_black.png', '/js/libs/images/boat50x50_blue.png', '/js/libs/images/boat50x50_red.png', '/js/libs/images/boat50x50_yellow.png');
+  var imageArray = new Array('/js/libs/images/map800_600_50_1.png', '/js/libs/images/ship_storm_100x150.png', '/js/libs/images/ship_100x150.png', '/js/libs/images/ship_crash_100x150.png', '/js/libs/images/treasure_100x150.png', '/js/libs/images/treasuremap_100x150.png', '/js/libs/images/boat50x50_black.png', '/js/libs/images/boat50x50_blue.png', '/js/libs/images/boat50x50_red.png', '/js/libs/images/boat50x50_yellow.png');
 
   for (var i = 0; i < imageArray.length; i++) {
     var tempImage = new Image();
@@ -203,212 +206,138 @@ function mouseclickedCards(evt) {
   
 }
 
-function drawTilesInViewNew() { 
-  // console.log('drawing this tileGrid =' + JSON.stringify(tileGrid));
+function drawMap() {
+  // draws the map starting from viewpoint
+  let x = viewPoint[0];
+  let y = viewPoint[1];
+  canvasContext.drawImage(mapImage, x * TILE_SIZE, y * TILE_SIZE, (canvasCols - 2) * TILE_SIZE, (canvasRows - 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, (canvasCols - 2) * TILE_SIZE, (canvasRows - 2) * TILE_SIZE);
+  // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+  // drawImage(image, sx = image x pos, sy = image y pos, sWidth = how many pix of image in x , sHeight  = how many pix of image in y , dx = x pos in canvas, dy = y pos in canvas, dWidth = width in canvas, dHeight = heigth in canvas);
+
+}
+
+function drawHexes() {
+  // from left to right
+  for (let i = 1; i < CANVAS_WIDTH / TILE_SIZE; i++){
+    // draw a vertical line
+    drawLine(i * TILE_SIZE, TILE_SIZE, i * TILE_SIZE, CANVAS_HEIGHT-TILE_SIZE, 0.5, "black");
+  }
+
+  // from left to right
+  for (let j = 1; j < CANVAS_HEIGHT / TILE_SIZE; j++) {
+    // draw a vertical line
+    drawLine(TILE_SIZE, j * TILE_SIZE, CANVAS_WIDTH - TILE_SIZE, j * TILE_SIZE, 0.5, "black");
+  }
+  // draw a vertical line
+  //drawLine(fromX, fromY, toX, toY, lineWidth, lineColor)
+}
+
+function drawTilesInViewNew() {
+  console.log('drawing this tileGrid =' + JSON.stringify(tileGrid));
   // takes a server prepared grid to draw in canvas
   // in our canvas we draw hexes from top left to bottom right
   // to leave white scroll area around the hex map - we start at 100, 100
 
+  // change after use of map image
+
   let i = 0; // index counter for going through grid
+
   for (let eachRow = 1; eachRow < CANVAS_HEIGHT / TILE_SIZE - 1; eachRow++) {
     // loop from 1 to number of rows - 1
     for (let eachCol = 1; eachCol < CANVAS_WIDTH / TILE_SIZE - 1; eachCol++) {
-      // loop from 1 to number of cols -1
-      //console.log('drawing index = ' + i + ' at x = ' + TILE_SIZE * (eachCol) + 'and y = ' + TILE_SIZE * (eachRow) + 'with value = ' + grid[i] );
-      switch (tileGrid[i]) { // was (grid[i])
-        case 0: {
-          colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'black'); // TO DO: optimize the 4 calls to one with a colour argument?
-          break;
-        }
-        case 1: { // land
-          colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cab796');
-          break;
-        }
 
-        case 2: { // habour
-          colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'grey');
-          // and add stroke around
-          //outlineRect(TILE_SIZE * (eachCol) - TILE_GAP, TILE_SIZE * (eachRow) - TILE_GAP, TILE_SIZE + (2 * TILE_GAP), TILE_SIZE + (2 * TILE_GAP), 'blue');
+      //hex = { goldInHex: false, shipInHex: { playerId: null, marking: "none", goldOnShip: 0 } };
+      // first draw gold in sea
 
-          break;
-        }
-
-        case 3: { // sea
-          colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cbe1e1');
-          break;
-        }
-        
-        case 4: { // gold in sea        
-
-          // draw sea hex
-          colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cbe1e1');
-          
-          // draw gold marking
-          drawGoldInSea(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), 'gold');
-          break;
-        }
-
-        default: {
-          // then it must be a ship
-          // first char of code indicates ship
-          let code = tileGrid[i];
-          var subcode = code.charAt(1); // get second digit
-
-          switch (subcode) {
-            case '0': { // player 0 ship     
-              //colorRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, '#cbe1e1');
-              canvasContext.drawImage(boatPic1, (TILE_SIZE * (eachCol)) + TILE_GAP , (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
-
-              if (code.charAt(2) === '1') { // Gold!
-                // gold marking
-                //outlineRect(TILE_SIZE * (eachCol) + 4, TILE_SIZE * (eachRow) + 4, TILE_SIZE - TILE_GAP*5, TILE_SIZE - TILE_GAP*4, 'yellow');
-                drawGoldOnShip(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow));
-              } 
-
-              // check for marked or selected or selected target
-              switch (code.charAt(3)) {
-                case '1' : { // marked ship
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '2': { // selected ship
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '3': { // selected target
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                case '4': { // marked target
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                default: { // no markings
-                  break;
-                }
-              }
-              break;
-            }  
-
-            case '1': { // player 1 ship
-              canvasContext.drawImage(boatPic2, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
-              
-              if (code.charAt(2) === '1') { // Gold!
-                // gold marking
-                drawGoldOnShip(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow));
-                //outlineRect(TILE_SIZE * (eachCol) + 4, TILE_SIZE * (eachRow) + 4, TILE_SIZE - TILE_GAP * 5, TILE_SIZE - TILE_GAP * 4, 'yellow');              
-              } 
-
-
-              switch (code.charAt(3)) {
-                case '1': { // marked ship
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '2': { // selected ship
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '3': { // selected target
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                case '4': { // marked target
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                default: { // no markings
-                  break;
-                }
-              }
-              
-              break;
-            }
-
-            case '2': { // player 2 ship
-              canvasContext.drawImage(boatPic3, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
-
-              if (code.charAt(2) === '1') { // Gold!
-                // gold marking
-                drawGoldOnShip(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow));
-                //outlineRect(TILE_SIZE * (eachCol) + 4, TILE_SIZE * (eachRow) + 4, TILE_SIZE - TILE_GAP * 5, TILE_SIZE - TILE_GAP * 4, 'yellow');              
-              } 
-
-              switch (code.charAt(3)) {
-                case '1': { // marked ship
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '2': { // selected ship
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '3': { // selected target
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                case '4': { // marked target
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                default: { // no markings
-                  break;
-                }
-              }
-
-              break;
-            }
-
-            case '3': { // player 3 ship
-              canvasContext.drawImage(boatPic4, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
-              
-              if (code.charAt(2) === '1') { // Gold!
-                // gold marking
-                drawGoldOnShip(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow));
-                //outlineRect(TILE_SIZE * (eachCol) + 4, TILE_SIZE * (eachRow) + 4, TILE_SIZE - TILE_GAP * 5, TILE_SIZE - TILE_GAP * 4, 'yellow');              
-              } 
-
-              switch (code.charAt(3)) {
-                case '1': { // marked ship
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '2': { // selected ship
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
-                  break;
-                }
-                case '3': { // selected target
-                  outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                case '4': { // marked target
-                  outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
-                  break;
-                }
-                default: { // no markings
-                  break;
-                }
-              }
-
-              break;
-            }
-          }
-          
-        }
+      if (tileGrid[i].goldInHex){
+        // draw gold in hex
+        drawGoldInSea(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), 'gold');
       }
+
+      // do we have a ship in hex?
+
+      if (tileGrid[i].shipInHex.playerId != null) {
+        // ship in hex!
+
+        // which color ship?
+        switch (tileGrid[i].shipInHex.playerId) {
+          case 0: 
+            canvasContext.drawImage(boatPic1, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
+            break;
+
+          case 1:
+            canvasContext.drawImage(boatPic2, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
+            break; 
+
+            case 2:
+            canvasContext.drawImage(boatPic3, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
+            break;   
+
+          case 3:
+            canvasContext.drawImage(boatPic4, (TILE_SIZE * (eachCol)) + TILE_GAP, (TILE_SIZE * (eachRow)) + TILE_GAP, TILE_SIZE - (3 * TILE_GAP), TILE_SIZE - (3 * TILE_GAP));
+            break;  
+        }
+
+        // gold on ship?
+        if (tileGrid[i].shipInHex.goldOnShip === 1) { // Gold!
+          drawGoldOnShip(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow));
+        }
+
+        //  draw shadow
+        colorRect(
+          ((TILE_SIZE * eachCol) + (TILE_SIZE - (2 * TILE_GAP))),
+          ((TILE_SIZE * eachRow) + TILE_GAP),
+          TILE_GAP,
+          TILE_SIZE - (TILE_GAP * 2), '#555');
+
+        colorRect(
+          (TILE_SIZE * eachCol) + TILE_GAP,
+          (TILE_SIZE * eachRow) + (TILE_SIZE - (2 * TILE_GAP)),
+          TILE_SIZE - (TILE_GAP * 2),
+          TILE_GAP, '#555');
+
+        // Check marking
+        switch (tileGrid[i].shipInHex.marking) {
+          case 'marked': { // marked ship
+            outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'green');
+            break;
+          }
+
+          case 'selected': { // selected ship
+            outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 5, 'green');
+            break;
+          }
+
+          case 'attackSelected': { // selected target
+            outlineRect(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 5, 'red');
+            break;
+          }
+
+          case 'attackMarked': { // marked target
+            outlineRectDotted(TILE_SIZE * (eachCol), TILE_SIZE * (eachRow), TILE_SIZE - TILE_GAP, TILE_SIZE - TILE_GAP, 'red');
+            break;
+          }
+
+          default: { // 'none' = no markings
+            break;
+          }
+        }
+
+      }
+      
       i++; // increase counter - next hex
     }
   }
 }
 
-function drawTileUnderMouse() { // lav om til en kant rundt om tile under mus
+function drawTileUnderMouse() { 
 	let drawCanvasMouseCol = Math.floor(mouseX / TILE_SIZE);
 	let drawCanvasMouseRow = Math.floor(mouseY / TILE_SIZE);
-
-	outlineRect(TILE_SIZE*drawCanvasMouseCol,TILE_SIZE*drawCanvasMouseRow, TILE_SIZE-TILE_GAP, TILE_SIZE-TILE_GAP, 'black');
+  outlineRect(TILE_SIZE * drawCanvasMouseCol - TILE_GAP, TILE_SIZE * drawCanvasMouseRow - TILE_GAP, TILE_SIZE + (2 * TILE_GAP), TILE_SIZE + (2 * TILE_GAP), 1, 'black');
 }
 
 function drawCoords() {
+
 
   let cordRow, cordCol;
   for (let eachRow = 0; eachRow < canvasRows-2; eachRow++) { 
@@ -416,12 +345,17 @@ function drawCoords() {
       cordRow = viewPoint[1] + eachRow;
       cordCol = viewPoint[0] + eachCol;
 
-      if ((cordRow === 0 && cordCol === 0) || (cordRow === 0 && cordCol === BOARD_COLS - 1) || (cordCol === 0 && cordRow === BOARD_ROWS - 1) || (cordCol === BOARD_COLS - 1 && cordRow === BOARD_ROWS - 1))  { } // upper left corner - do nothing
+      if ((cordRow === 0 && cordCol === 0) || (cordRow === 0 && cordCol === BOARD_COLS - 1) || (cordCol === 0 && cordRow === BOARD_ROWS - 1) || (cordCol === BOARD_COLS - 1 && cordRow === BOARD_ROWS - 1)){ 
+      } // upper left corner - do nothing
       else if (cordRow === 0 || cordRow === BOARD_ROWS - 1) { // first and last board row
-        colorText(cordCol, TILE_SIZE * (eachCol + 1 ) + (TILE_SIZE / 2 - 8), TILE_SIZE * (eachRow + 1) + (TILE_SIZE / 2), 'white'); // draw only row number
-      } else if (cordCol === 0 || cordCol === BOARD_COLS - 1) { colorText(cordRow, TILE_SIZE * (eachCol + 1) + (TILE_SIZE / 2 - 8), TILE_SIZE * (eachRow + 1) + (TILE_SIZE / 2), 'white'); }
+        colorText(cordCol, TILE_SIZE * (eachCol + 1 ) + (TILE_SIZE / 2 - 6), TILE_SIZE * (eachRow + 1) + (TILE_SIZE / 2) + 4, 'black'); // draw only row number
+      } 
+      else if (cordCol === 0 || cordCol === BOARD_COLS - 1) // first and last boarc col
+      { colorText(cordRow, TILE_SIZE * (eachCol + 1) + (TILE_SIZE / 2 - 6), TILE_SIZE * (eachRow + 1) + (TILE_SIZE / 2) + 4, 'black'); }
+      
       else {
-        colorText(cordCol + "," + cordRow, TILE_SIZE * (eachCol + 1) + (TILE_SIZE / 2 - 8), TILE_SIZE * (eachRow + 1) + (TILE_SIZE / 2), 'white');
+        //colorText(cordCol + "," + cordRow, TILE_SIZE * (eachCol + 1) + (TILE_SIZE / 2 - 8), TILE_SIZE * (eachRow + 1) + (TILE_SIZE / 2), 'white');
+        // testing not showing coords in hexes - awaiting final decision
       }
 
     }
@@ -429,26 +363,19 @@ function drawCoords() {
 }
 
 function drawBoardNew() { 
-  colorRect(0, 0, canvas.width, canvas.height, 'lightblue'); // clear screen
-
+  colorRect(0, 0, canvas.width, canvas.height, '#5a2d13'); // clear screen
+  drawMap();
   drawTilesInViewNew(); 
-
   drawTileUnderMouse(); 
-
-  //drawMarkedPlayerShip();
-
-  //drawTargetPlayerShip();
-
-  //drawSelectedPlayerShip();
-
+  drawHexes();
   drawCoords();
-
-  //showStats();
 }
 
 function clearBoard() {
-  colorRect(0, 0, canvas.width, canvas.height, 'lightblue'); // clear screen
+  colorRect(0, 0, canvas.width, canvas.height, '#5a2d13'); // clear screen
+  drawMap();
   drawTilesInViewNew();
+  drawHexes();
   drawCoords();
 }
 
@@ -768,18 +695,28 @@ function colorCardRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
 }
 
 function colorText(showWords, textX,textY, fillColor) {
-	canvasContext.fillStyle = fillColor;
+  canvasContext.fillStyle = fillColor;
+  canvasContext.font = '20px Jim Nightshade';
 	canvasContext.fillText(showWords, textX,textY);
 }
 
-function outlineRect(topLeftX, topLeftY, boxWidth, boxHeight, lineColor) {
+function outlineRect(topLeftX, topLeftY, boxWidth, boxHeight, lineWidth, lineColor) {
 	canvasContext.beginPath();
 	canvasContext.strokeStyle = lineColor;
-	canvasContext.lineWidth = "5";
+	canvasContext.lineWidth = lineWidth;
   canvasContext.rect(topLeftX, topLeftY, boxWidth, boxHeight);
 	canvasContext.stroke();
 }
     
+function drawLine(fromX, fromY, toX, toY, lineWidth, lineColor) {
+  canvasContext.beginPath();
+  canvasContext.strokeStyle = lineColor;
+  canvasContext.lineWidth = lineWidth;
+  canvasContext.moveTo(fromX, fromY);
+  canvasContext.lineTo(toX, toY);
+  canvasContext.stroke();
+}
+
 function outlineRectDotted(topLeftX, topLeftY, boxWidth, boxHeight, lineColor) {
   canvasContext.beginPath();
   canvasContext.strokeStyle = lineColor;
